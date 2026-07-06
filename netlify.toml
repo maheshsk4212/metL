@@ -1,0 +1,8 @@
+[build]
+  publish = "."
+
+# Optional: redirects rule for single-page applications or clean URLs
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200

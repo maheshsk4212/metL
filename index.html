@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetLife Smart Planner 360° — App Dashboard</title>
+<style>
+:root{
+  --navy:#0F2A43; --navy2:#123354; --blue:#0090DA; --blue-d:#0072B8; --green:#5A9E1E; --green-l:#A4CE4E;
+  --amber:#B26A00; --amber-bg:#FCF3E3; --red:#C0392B; --red-bg:#FDEEEA;
+  --ink:#1A2B3C; --grey:#46586A; --grey-l:#7C8FA0;
+  --bg:#F2F5F8; --card:#fff; --line:#E1E8EE; --tint:#EAF4FB; --tint-b:#BFDFF3;
+  --r:10px; --sh:0 1px 3px rgba(15,42,67,.07),0 4px 14px rgba(15,42,67,.05);
+  --sbw:236px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;font-size:14px}
+button{font:inherit;cursor:pointer;border:none;background:none}
+input,select{font:inherit;color:var(--ink)}
+h1,h2,h3,h4{color:var(--navy)}
+
+/* ================= SHELL ================= */
+.sb{position:fixed;left:0;top:0;bottom:0;width:var(--sbw);background:linear-gradient(180deg,var(--navy),var(--navy2));display:flex;flex-direction:column;gap:2px;padding:16px 10px 12px;overflow-y:auto;z-index:90;transition:width .22s}
+body.sbMin .sb{width:64px;padding:16px 7px 12px}
+.sLogo{display:flex;align-items:center;gap:9px;color:#fff;font-weight:700;padding:2px 8px 16px;font-size:.9rem}
+.sLogo small{color:#7E96A9;font-weight:400;font-size:.64rem;display:block;letter-spacing:.1em}
+.sbi{display:flex;align-items:center;gap:10px;color:#B9C9D6;padding:9px 10px;border-radius:8px;font-size:.8rem;width:100%;text-align:left}
+.sbi:hover{background:rgba(255,255,255,.07);color:#fff}
+.sbi.on{background:var(--blue);color:#fff;font-weight:700}
+.sbi .ic{width:18px;text-align:center;flex:none}
+.sec{font-size:.62rem;letter-spacing:.14em;color:#6E87A0;font-weight:700;padding:14px 10px 5px;text-transform:uppercase}
+.sub2{margin-left:19px;border-left:2px solid rgba(255,255,255,.12)}
+.sub2 .sbi{padding:6px 10px;font-size:.77rem;border-radius:0 8px 8px 0}
+.sub2 .sbi.on{background:rgba(0,144,218,.28);border-left:2px solid var(--blue);margin-left:-2px}
+.cMini{background:rgba(255,255,255,.07);border-radius:10px;padding:10px;margin:6px 4px 2px;display:flex;gap:9px;align-items:center}
+.cMini .n{color:#fff;font-weight:700;font-size:.76rem}
+.cMini .s{font-size:.68rem;color:#8FB3C9}
+.sbSpace{flex:1}
+.sbFoot{border-top:1px solid rgba(255,255,255,.14);padding-top:11px;margin-top:8px;display:flex;gap:9px;align-items:center}
+.sbFoot .n{color:#fff;font-size:.74rem;font-weight:600;line-height:1.2}
+.sbFoot .s{font-size:.68rem;color:#8FB3C9}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+body.sbMin .lb,body.sbMin .sec,body.sbMin .cMini,body.sbMin .sub2,body.sbMin .sLogo .lt,body.sbMin .sbFoot div{display:none}
+
+.main{margin-left:var(--sbw);transition:margin .22s;min-height:100vh;display:flex;flex-direction:column}
+body.sbMin .main{margin-left:64px}
+.top{position:sticky;top:0;z-index:80;background:rgba(242,245,248,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top .bc{font-size:.68rem;color:var(--grey)}
+.top .bc b{color:var(--navy);font-size:.95rem;display:block}
+.iconBtn{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--grey);font-size:.9rem}
+.iconBtn:hover{border-color:var(--blue);color:var(--blue)}
+.seg{display:flex;gap:4px;margin-left:auto;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px;overflow-x:auto}
+.seg button{display:flex;align-items:center;gap:7px;font-size:.76rem;font-weight:700;color:var(--grey);padding:7px 14px;border-radius:99px;white-space:nowrap}
+.seg button .d{width:19px;height:19px;border-radius:50%;border:2px solid var(--grey-l);font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;color:var(--grey)}
+.seg button.done{color:var(--green)} .seg button.done .d{background:var(--green-l);border-color:var(--green-l);color:#fff}
+.seg button.cur{background:var(--tint);color:var(--blue-d)} .seg button.cur .d{border-color:var(--blue);color:var(--blue)}
+.content{padding:16px 22px 60px;flex:1}
+
+/* ================= 12-COL GRID ================= */
+.pgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;align-items:start}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}
+.c7{grid-column:span 7}.c8{grid-column:span 8}.c9{grid-column:span 9}.c12{grid-column:span 12}
+.stack{display:grid;gap:14px}
+@media(max-width:1250px){.c3,.c4{grid-column:span 6}.c5,.c7,.c8,.c9{grid-column:span 12}}
+@media(max-width:820px){.pgrid>*{grid-column:span 12!important}}
+
+/* ================= CARDS / FIELDS ================= */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px}
+.card h3{font-size:.95rem;margin-bottom:2px}
+.card .cap{color:var(--grey);font-size:.85rem;margin-bottom:10px}
+.secLbl{font-size:.69rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin:12px 0 7px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px 14px}
+.f label{display:block;font-size:.76rem;color:var(--grey);margin-bottom:3px;font-weight:600}
+.f input,.f select{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:#fff}
+.f input:focus,.f select:focus{outline:2px solid var(--tint-b);border-color:var(--blue)}
+.f.calc input{background:var(--tint);border-color:var(--tint-b);font-weight:700;color:var(--blue-d);cursor:default}
+.calcIc{font-size:.7rem;cursor:help}
+.calcSrc{font-size:.68rem;color:var(--grey);margin-top:3px}
+.src{display:inline-block;font-size:.63rem;font-weight:700;color:var(--blue-d);background:var(--tint);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:1px}
+.btnP{background:var(--blue);color:#fff;font-weight:700;border-radius:8px;padding:10px 20px;font-size:.84rem}
+.btnP:hover{background:var(--blue-d)}
+.btnS{background:#fff;border:1px solid var(--line);color:var(--grey);font-weight:600;border-radius:8px;padding:10px 16px;font-size:.84rem}
+.navRow{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.navRow .btnP{flex:1;max-width:460px}
+.chip{display:inline-block;background:var(--tint);color:var(--blue-d);font-weight:700;border-radius:5px;padding:0 5px}
+.disc{font-size:.66rem;color:var(--grey);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-top:10px}
+
+/* KPIs & dashboard */
+.kpi{background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:var(--r);box-shadow:var(--sh);padding:12px 16px}
+.kpi .l{font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--grey);text-transform:uppercase}
+.kpi .v{font-size:1.45rem;font-weight:800;color:var(--navy);margin:1px 0}
+.kpi .s{font-size:.68rem;color:var(--grey)}
+table.leads{width:100%;border-collapse:collapse;font-size:.78rem}
+table.leads th{font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--grey);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+table.leads td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.lost td{opacity:.5}
+.lAv{width:26px;height:26px;border-radius:50%;color:#fff;font-size:.63rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-right:8px;vertical-align:middle}
+.sbdg{font-size:.7rem;font-weight:700;border-radius:99px;padding:2px 9px}
+.sbdg.hot{background:#EFF7E6;color:var(--green);border:1px solid #CBE3A9}
+.sbdg.warm{background:var(--amber-bg);color:var(--amber);border:1px solid #F0D9AC}
+.sbdg.cold{background:var(--bg);color:var(--grey);border:1px solid var(--line)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.filterRow{display:flex;gap:6px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+.filterRow button{font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:99px;background:var(--bg);color:var(--grey);border:1px solid var(--line)}
+.filterRow button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.filterRow .cnt{margin-left:auto;font-size:.7rem;color:var(--grey)}
+.nba{display:flex;gap:10px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;align-items:flex-start}
+.nba .ic{width:26px;height:26px;border-radius:8px;background:var(--tint);color:var(--blue-d);display:flex;align-items:center;justify-content:center;flex:none;font-size:.8rem}
+.nba .t{font-size:.78rem;font-weight:700;color:var(--navy)}
+.nba .d{font-size:.7rem;color:var(--grey)}
+.skillRow{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;width:100%;text-align:left;transition:.15s;background:#fff}
+.skillRow:hover{border-color:var(--blue);transform:translateX(2px)}
+.skillRow .no{font-size:.7rem;font-weight:800;color:var(--blue);width:20px}
+.skillRow .t{font-weight:700;color:var(--navy);font-size:.8rem}
+.skillRow .d{font-size:.68rem;color:var(--grey)}
+.skillRow .go{margin-left:auto;color:var(--blue);font-weight:700}
+
+/* score */
+.ring{width:104px;height:104px;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p)*1%), #E4EDF3 0);display:flex;align-items:center;justify-content:center;margin:6px auto 12px}
+.ring .inn{width:80px;height:80px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .inn b{font-size:1.5rem;color:var(--navy)}
+.ring .inn s{font-size:.62rem;color:var(--green);font-weight:700;text-decoration:none}
+.factRow{border:1px solid var(--line);border-radius:8px;padding:8px 11px;margin-bottom:7px}
+.factRow .t{display:flex;justify-content:space-between;font-size:.75rem;font-weight:700;color:var(--navy)}
+.factRow .t b{color:var(--blue-d)}
+.factRow .w{font-size:.7rem;color:var(--grey)}
+.fbar{height:4px;border-radius:3px;background:#E4EDF3;margin-top:5px;overflow:hidden}
+.fbar i{display:block;height:100%;background:var(--green-l)}
+
+/* accordions / beats */
+.acc{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;overflow:hidden;background:#fff}
+.acc>button{width:100%;display:flex;align-items:center;gap:9px;padding:10px 12px;text-align:left;font-size:.79rem;font-weight:700;color:var(--navy)}
+.acc>button .ar{margin-left:auto;color:var(--grey-l);transition:.2s;flex:none}
+.acc.open>button .ar{transform:rotate(180deg)}
+.acc .bd{display:none;padding:0 12px 12px;font-size:.77rem;color:var(--grey)}
+.acc.open .bd{display:block}
+.acc .bd b{color:var(--navy)}
+.acc .intent{font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--blue-d);background:var(--tint);border-radius:4px;padding:2px 7px}
+.beatChk{accent-color:var(--green);width:15px;height:15px;flex:none}
+.acc.checked{background:#F7FBEF;border-color:#CBE3A9}
+.q{border-left:3px solid var(--tint-b);background:var(--bg);border-radius:0 7px 7px 0;padding:8px 10px;margin-top:6px;font-style:italic;font-size:.76rem;color:var(--grey)}
+.aiTxt .full{display:none}.aiTxt.open .full{display:inline}.aiTxt.open .short{display:none}
+.rm{color:var(--blue);font-weight:700;font-size:.72rem}
+.gc{border:1px solid var(--line);border-radius:8px;margin-bottom:7px;overflow:hidden}
+.gc button.gh{width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:.74rem;font-weight:700;color:var(--navy);text-align:left}
+.gc .gh .ar{margin-left:auto;color:var(--grey-l);transition:.2s}
+.gc.open .gh .ar{transform:rotate(180deg)}
+.gc .gb{display:none;padding:0 10px 9px;font-size:.71rem;color:var(--grey);font-style:italic}
+.gc.open .gb{display:block}
+.railHead{background:linear-gradient(120deg,var(--navy),#154066);color:#fff;border-radius:var(--r) var(--r) 0 0;padding:11px 14px;font-weight:700;font-size:.82rem}
+.railHead small{display:block;font-weight:400;color:#9FB4C6;font-size:.69rem}
+.railBody{background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:10px}
+.railWrap{box-shadow:var(--sh);border-radius:var(--r)}
+
+/* gaps / sliders */
+.gapRow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.gap{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;text-align:center}
+.gap .l{font-size:.65rem;color:var(--grey);font-weight:600}
+.gap .v{font-size:1.2rem;font-weight:800;color:var(--navy)}
+.gap .how{font-size:.68rem;color:var(--blue);font-weight:700;margin-top:2px;display:inline-block}
+.howBox{display:none;font-size:.68rem;color:var(--grey);background:var(--tint);border-radius:6px;padding:7px 9px;margin-top:6px;text-align:left}
+.gap.open .howBox{display:block}
+.alloc{border:1px solid var(--line);border-radius:8px;padding:11px 13px;margin-bottom:9px;background:#fff}
+.alloc .topr{display:flex;align-items:baseline;gap:10px}
+.alloc .nm{font-weight:700;font-size:.82rem;color:var(--navy)}
+.alloc .gp{font-size:.68rem;color:var(--grey)}
+.alloc .pc{margin-left:auto;font-weight:800;font-size:.95rem;color:var(--navy)}
+.alloc .amt{font-size:.68rem;color:var(--grey);text-align:right}
+input[type=range]{width:100%;accent-color:var(--blue);margin-top:5px}
+.allocBar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--navy);color:#fff;border-radius:8px;padding:10px 14px;font-size:.78rem;margin-top:6px}
+.allocBar b{font-size:.92rem}
+.verd{border-radius:99px;padding:3px 11px;font-weight:700;font-size:.7rem}
+.verd.ok{background:#EFF7E6;color:var(--green)}.verd.tight{background:var(--amber-bg);color:var(--amber)}.verd.rev{background:var(--red-bg);color:var(--red)}
+.warn{display:flex;gap:8px;font-size:.75rem;border-radius:8px;padding:9px 12px;margin-top:8px}
+.warn.g{background:#EFF7E6;color:var(--green)}.warn.a{background:var(--amber-bg);color:var(--amber)}.warn.r{background:var(--red-bg);color:var(--red)}
+.rank{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:6px;background:#fff}
+.rank .no{width:21px;height:21px;border-radius:50%;background:var(--blue);color:#fff;font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.rank .nm{font-weight:600;font-size:.8rem}
+.rank .lock{font-size:.6rem;color:var(--grey-l);background:var(--bg);border-radius:99px;padding:2px 8px}
+.rank .mv{margin-left:auto;display:flex;gap:4px}
+.rank .mv button{width:23px;height:23px;border:1px solid var(--line);border-radius:6px;color:var(--grey);font-size:.68rem}
+.rank .mv button:hover{border-color:var(--blue);color:var(--blue)}
+
+/* products / p4 */
+.prod{border:1px solid var(--line);border-radius:8px;padding:11px 13px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.prod .i{flex:1}
+.prod .nm{font-weight:700;font-size:.82rem;color:var(--navy)}
+.prod .tag{display:inline-block;font-size:.64rem;font-weight:700;border-radius:4px;padding:2px 6px;margin-left:6px;background:var(--tint);color:var(--blue-d)}
+.prod .d{font-size:.72rem;color:var(--grey);margin-top:2px}
+.prod .pr{text-align:right}
+.prod .pr .m{font-weight:800;color:var(--navy)}
+.prod .pr .s{font-size:.7rem;color:var(--grey)}
+.unfundedHead{width:100%;text-align:left;font-size:.74rem;font-weight:700;color:var(--grey);padding:7px 2px}
+.unfunded{display:none}.unfunded.open{display:block}
+.pCard{border:1px solid var(--line);border-radius:var(--r);padding:13px;flex:1;min-width:250px}
+.pCard .rec{font-size:.62rem;font-weight:700;letter-spacing:.06em;background:var(--tint);color:var(--blue-d);border-radius:4px;padding:2px 7px}
+.pCard h4{font-size:.9rem;margin:5px 0 8px;color:var(--blue-d)}
+.pStats{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pStats .st{background:var(--bg);border-radius:7px;padding:7px 9px}
+.pStats .st .l{font-size:.62rem;font-weight:700;letter-spacing:.06em;color:var(--grey);text-transform:uppercase}
+.pStats .st .v{font-weight:800;color:var(--navy)}
+.feat{font-size:.7rem;color:var(--grey);margin-top:8px}
+.feat li{margin-left:16px;margin-top:2px}
+.riskPills{display:flex;gap:8px;margin:8px 0}
+.riskPills button{flex:1;border:2px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+.riskPills button.on{border-color:var(--blue);background:var(--tint)}
+.riskPills .rn{font-weight:700;font-size:.76rem;color:var(--navy)}
+.riskPills .rr{font-size:.68rem;color:var(--grey)}
+.simRow{display:flex;align-items:center;gap:12px;font-size:.74rem;color:var(--grey);margin-top:6px;flex-wrap:wrap}
+.simRow b{color:var(--navy);font-size:.9rem}
+.tblY{width:100%;border-collapse:collapse;font-size:.74rem;margin-top:8px}
+.tblY th,.tblY td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right}
+.tblY th:first-child,.tblY td:first-child{text-align:left}
+.tblY th{color:var(--grey);font-size:.6rem;text-transform:uppercase;letter-spacing:.06em}
+.tblY tr.hl td{background:var(--tint);font-weight:700}
+.closeSeq{counter-reset:cs;font-size:.76rem;color:var(--grey)}
+.closeSeq li{list-style:none;counter-increment:cs;display:flex;gap:9px;padding:4px 0}
+.closeSeq li::before{content:counter(cs);width:19px;height:19px;border-radius:50%;background:var(--blue);color:#fff;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.trig{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.trig span{font-size:.7rem;font-weight:600;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--grey)}
+.outRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.outRow button{flex:1;min-width:130px;border-radius:8px;padding:11px;font-weight:700;font-size:.8rem;border:2px solid transparent}
+.oWon{background:#EFF7E6;color:var(--green)}.oPend{background:var(--amber-bg);color:var(--amber)}.oLost{background:var(--red-bg);color:var(--red)}
+.outRow button.picked{border-color:currentColor}
+.outMsg{margin-top:10px;font-size:.78rem;font-weight:700;color:var(--green)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;border-radius:99px;padding:10px 22px;font-size:.8rem;font-weight:600;box-shadow:0 8px 30px rgba(15,42,67,.35);opacity:0;pointer-events:none;transition:.3s;z-index:200}
+.toast.show{opacity:1}
+.btnP:disabled{opacity:.45;cursor:not-allowed}
+
+/* goal planner / choose your plan */
+.stepIc{width:22px;height:22px;border-radius:50%;background:var(--tint);color:var(--blue-d);font-size:.7rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.snapGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.snapBox{background:var(--tint);border-radius:8px;padding:11px 13px}
+.snapBox.wide{grid-column:span 2}
+.snapBox .l{font-size:.66rem;color:var(--grey)}
+.snapBox .v{font-size:1.05rem;font-weight:800;color:var(--navy);margin-top:2px}
+.snapBox input{background:#fff;border:1px solid var(--tint-b);border-radius:7px;padding:7px 10px;width:100%}
+.needGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.needCard{position:relative;text-align:left;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:#fff}
+.needCard.on{background:var(--tint);border-color:var(--tint-b)}
+.needCard .chk{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);font-size:.6rem;color:#fff;display:flex;align-items:center;justify-content:center}
+.needCard.on .chk{background:var(--blue);border-color:var(--blue)}
+.needCard .nm{font-weight:700;color:var(--blue-d);font-size:.84rem;margin-right:22px}
+.needCard .d{font-size:.72rem;color:var(--grey);margin-top:2px}
+.allocHead{display:grid;grid-template-columns:22px 44px 1fr 110px 140px 28px;gap:8px;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--grey);padding:0 4px;margin-top:12px}
+.allocRow2{display:grid;grid-template-columns:22px 44px 1fr 110px 140px 28px;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:7px;background:#fff}
+.no2{width:22px;height:22px;border-radius:50%;background:var(--bg);border:1px solid var(--line);font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--grey)}
+.mv2{display:flex;gap:4px}
+.mv2 button{width:26px;height:26px;border:1px solid var(--line);border-radius:6px;color:var(--grey);font-size:.7rem}
+.mv2 button:disabled{opacity:.35}
+.nm2{font-weight:700;font-size:.8rem;color:var(--navy)}
+.fAlloc{position:relative}.fAlloc input{width:100%;padding:6px 20px 6px 8px;border:1px solid var(--line);border-radius:6px}
+.fAlloc i{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.68rem;color:var(--grey);font-style:normal}
+.fAmt input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px}
+.trash{color:var(--grey-l);font-size:.85rem;width:26px;height:26px;border-radius:6px}
+.trash:hover{color:var(--red);background:var(--red-bg)}
+.planTabsRow{display:flex;align-items:center;gap:14px;margin:14px 0 4px;flex-wrap:wrap}
+.planTabs{display:flex;gap:0;border-bottom:1px solid var(--line);overflow-x:auto;flex:1}
+.planTab{padding:9px 4px;margin-right:20px;font-size:.78rem;font-weight:600;color:var(--grey);border-bottom:2px solid transparent;white-space:nowrap}
+.planTab.on{color:var(--blue-d);border-color:var(--blue-d);font-weight:700}
+.progressPill{font-size:.68rem;font-weight:700;color:var(--blue-d);background:var(--tint);border-radius:99px;padding:5px 12px;white-space:nowrap}
+.codeTag{font-size:.6rem;font-weight:800;color:var(--blue-d);background:var(--tint);border-radius:5px;padding:2px 6px}
+.prodOpt{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;font-weight:600;font-size:.8rem;color:var(--navy)}
+.prodOpt.on{border-color:var(--navy);border-width:2px}
+.prodOpt .rec{display:block;width:fit-content;margin-bottom:4px;font-size:.64rem;font-weight:700;letter-spacing:.06em;background:var(--tint);color:var(--blue-d);border-radius:4px;padding:2px 7px}
+.whyBanner{background:linear-gradient(120deg,var(--navy),#154066);color:#fff;border-radius:var(--r);padding:14px 16px;margin-top:12px}
+.whyBanner h4{color:#fff}
+.whyBanner .whyTag{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9FB4C6}
+.whyBanner .s{color:#CBDBE8}
+.whyStats{display:flex;gap:18px;flex-wrap:wrap;margin-top:9px;font-size:.72rem;color:#CBDBE8}
+.whyStats b{color:#fff;font-size:.86rem}
+.planPrimary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.planSecondary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.planStat{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.planStat.primary{padding:14px 16px;background:#fff;border:1px solid var(--tint-b)}
+.planStat.secondary{padding:8px 10px;background:var(--bg)}
+.planStat.secondary .l{font-size:.64rem}
+.planStat.secondary .v{font-size:.85rem}
+.planStat .l{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--grey)}
+.planStat .v{font-size:1.05rem;font-weight:800;color:var(--navy);margin-top:2px}
+.planStat .v.big{font-size:1.4rem}
+.planStat .s{font-size:.68rem;color:var(--grey);margin-top:2px}
+.planStat input[type=number],.planStat input[type=text]{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:7px;margin-top:6px}
+.planStat input.reqInput{border-color:var(--red)}
+.currTogRow{display:flex;gap:6px;margin-top:6px}
+.curBtn{border:1px solid var(--line);border-radius:99px;padding:3px 12px;font-size:.68rem;font-weight:700;color:var(--grey)}
+.curBtn.on{border-color:var(--blue);color:var(--blue-d);background:var(--tint)}
+.srcTag{font-size:.68rem;color:var(--grey);margin-top:6px}
+.hint{font-size:.65rem;color:var(--grey);background:var(--bg);border-radius:6px;padding:6px 8px;margin-top:6px}
+.freqRow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.freqBtn{border:1px solid var(--line);border-radius:99px;padding:3px 10px;font-size:.66rem;font-weight:600;color:var(--grey)}
+.freqBtn.on{border-color:var(--blue);color:var(--blue-d);background:var(--tint)}
+.membersSection{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.memberRow{display:flex;align-items:center;gap:10px;margin-top:8px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff}
+.memberRow .s{font-size:.68rem;color:var(--grey)}
+.memberRow .sa{margin-left:auto;text-align:right;font-size:.65rem;color:var(--grey)}
+
+/* Wizard Styles */
+.wizard-header { margin-bottom: 20px; }
+.wizard-step-title { font-size: 1.4rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.wizard-step-desc { font-size: 0.9rem; color: var(--grey); margin-bottom: 20px; }
+
+/* Switch style */
+.switch { position: relative; display: inline-block; width: 48px; height: 24px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.sw-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #E1E8EE; transition: .3s; border-radius: 34px; }
+.sw-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+input:checked + .sw-slider { background-color: var(--blue); }
+input:checked + .sw-slider:before { transform: translateX(24px); }
+
+/* Risk strategy cards */
+.risk-card { border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: flex; align-items: center; gap: 16px; margin-bottom: 12px; cursor: pointer; background: #fff; transition: all 0.2s; text-align: left; width: 100%; border-style: solid; outline: none; }
+.risk-card.active { border-color: var(--blue); border-width: 2px; background: var(--tint); }
+.risk-card .icon-wrap { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f2f5f8; flex-shrink: 0; font-size: 1.2rem; }
+.risk-card.active .icon-wrap { background: #fff; color: var(--blue); }
+.risk-card .info { flex: 1; }
+.risk-card .info h4 { font-size: 1rem; color: var(--navy); font-weight: 700; margin-bottom: 2px; }
+.risk-card .info p { font-size: 0.8rem; color: var(--grey); margin: 0; }
+.risk-card .badge-wrap { text-align: right; }
+.risk-card .badge-wrap .ret { font-size: 0.95rem; font-weight: 800; color: var(--navy); }
+.risk-card .badge-wrap .lbl { font-size: 0.7rem; font-weight: 700; border-radius: 4px; padding: 2px 6px; margin-top: 4px; display: inline-block; }
+.risk-card .badge-wrap .lbl.low { background: #EFF7E6; color: var(--green); }
+.risk-card .badge-wrap .lbl.medium { background: var(--amber-bg); color: var(--amber); }
+.risk-card .badge-wrap .lbl.high { background: var(--red-bg); color: var(--red); }
+
+/* Fund allocation styling */
+.fund-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; background: #fff; padding: 14px; border: 1px solid var(--line); border-radius: 8px; }
+.fund-info { display: flex; justify-content: space-between; align-items: center; }
+.fund-name { font-weight: 700; font-size: 0.9rem; color: var(--navy); }
+.fund-pct { font-weight: 800; font-size: 1rem; color: var(--navy); }
+.fund-details { font-size: 0.75rem; color: var(--grey); }
+.total-badge { background: #EFF7E6; color: var(--green); border: 1px solid #CBE3A9; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; display: inline-block; }
+.total-badge.error { background: var(--red-bg); color: var(--red); border-color: #F8D7DA; }
+
+/* Rider custom card */
+.rider-card { border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; background: #fff; }
+.rider-card.included { background: #EAF4FB; border-color: var(--tint-b); }
+.rider-card .info { flex: 1; padding-right: 12px; }
+.rider-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--navy); }
+.rider-card p { font-size: 0.78rem; color: var(--grey); margin: 0; }
+.rider-card .cost { font-size: 0.78rem; font-weight: 700; color: var(--blue-d); margin-top: 4px; }
+
+/* SVG simulation chart styling */
+.sim-chart-container { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 16px; position: relative; }
+.sim-chart-legend { display: flex; gap: 16px; justify-content: center; margin-top: 10px; font-size: 0.75rem; }
+.sim-legend-item { display: flex; align-items: center; gap: 6px; }
+.sim-legend-color { width: 12px; height: 12px; border-radius: 50%; }
+
+/* Event Simulator */
+.event-sim-box { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-top: 16px; }
+.event-row { display: flex; gap: 10px; align-items: flex-end; margin-top: 8px; }
+
+/* Solution Summary Styles */
+.sol-summary-card { background: #fff; border: 2px solid var(--blue); border-radius: var(--r); box-shadow: var(--sh); padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.sol-summary-stats { display: flex; gap: 40px; }
+.sol-summary-stat { text-align: left; }
+.sol-summary-label { font-size: 0.75rem; color: var(--grey); text-transform: uppercase; font-weight: 700; }
+.sol-summary-val { font-size: 1.5rem; font-weight: 800; color: var(--blue-d); margin-top: 2px; }
+
+.product-summary-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--sh); padding: 18px; margin-bottom: 16px; position: relative; }
+.product-summary-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
+.product-summary-meta { display: flex; align-items: center; gap: 8px; }
+.product-summary-badge { background: var(--tint); color: var(--blue-d); font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; }
+.product-summary-title { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+.product-summary-subtitle { font-size: 0.8rem; color: var(--grey); }
+.product-summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+.product-summary-cell { font-size: 0.8rem; }
+.product-summary-cell .lbl { color: var(--grey); font-size: 0.7rem; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+.product-summary-cell .val { font-weight: 700; color: var(--navy); }
+.product-summary-section { border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 10px; }
+.product-summary-section .lbl { font-size: 0.72rem; font-weight: 700; color: var(--grey); text-transform: uppercase; margin-bottom: 6px; }
+.product-summary-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.product-summary-pill { background: var(--bg); border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; font-size: 0.75rem; color: var(--navy); font-weight: 600; }
+
+/* Solution & AI Insights Dashboard Styles */
+.client-banner-card { background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--blue); border-radius: var(--r); box-shadow: var(--sh); padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.client-banner-left { flex: 1; }
+.client-banner-name { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.client-banner-meta { font-size: 0.85rem; color: var(--grey); margin-bottom: 8px; }
+.client-banner-dependants { display: flex; gap: 8px; }
+.client-banner-dep { background: var(--bg); border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; color: var(--grey); font-weight: 700; }
+.client-banner-right { display: flex; gap: 32px; border-left: 1px solid var(--line); padding-left: 32px; }
+.client-banner-stat { text-align: right; }
+.client-banner-stat .lbl { font-size: 0.7rem; color: var(--grey); font-weight: 700; text-transform: uppercase; }
+.client-banner-stat .val { font-size: 1.45rem; font-weight: 800; color: var(--navy); margin-top: 2px; }
+.client-banner-stat .val.highlight { color: var(--blue); }
+
+.ai-insights-container { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 20px; margin-bottom: 20px; box-shadow: var(--sh); }
+.ai-section { margin-bottom: 16px; border-left: 3px solid var(--blue); padding-left: 16px; }
+.ai-section.insight { border-left-color: var(--green); }
+.ai-section.outcome { border-left-color: var(--navy); }
+.ai-section h4 { font-size: 0.95rem; font-weight: 800; color: var(--navy); text-transform: uppercase; margin-bottom: 4px; }
+.ai-section p { font-size: 0.82rem; color: var(--grey); line-height: 1.45; }
+
+.product-review-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--sh); overflow: hidden; margin-bottom: 24px; }
+.product-review-banner { background: linear-gradient(135deg, var(--navy) 0%, #1c3d5a 100%); padding: 30px; position: relative; color: #fff; display: flex; justify-content: space-between; align-items: flex-end; }
+.product-review-banner-decor { position: absolute; top: 0; right: 0; bottom: 0; left: 0; opacity: 0.08; background-size: cover; pointer-events: none; }
+.product-review-meta { z-index: 1; }
+.product-review-tag { font-size: 0.68rem; font-weight: 800; color: #9fb4c6; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.product-review-title { font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+.product-review-subtitle { font-size: 0.85rem; color: #cbdbe8; }
+.product-review-projection { text-align: right; z-index: 1; }
+.product-review-projection .lbl { font-size: 0.7rem; color: #cbdbe8; text-transform: uppercase; }
+.product-review-projection .val { font-size: 1.8rem; font-weight: 800; color: #fff; }
+
+.product-review-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
+.product-review-left { display: flex; flex-direction: column; gap: 16px; }
+.product-review-right { display: flex; flex-direction: column; gap: 16px; }
+.review-box { border: 1px solid var(--line); border-radius: 8px; padding: 14px; background: #fff; }
+.review-box.why-fits { background: #EFF7E6; border-color: #CBE3A9; }
+.review-box h4 { font-size: 0.85rem; text-transform: uppercase; color: var(--navy); margin-bottom: 8px; }
+
+@media(max-width:820px){
+  .sb{width:64px;padding:16px 7px 12px}
+  .lb,.sec,.cMini,.sub2,.sLogo .lt,.sbFoot div{display:none}
+  .main{margin-left:64px}
+  .grid3{grid-template-columns:1fr}.grid2,.gapRow{grid-template-columns:1fr}
+  .snapGrid,.needGrid,.planPrimary,.planSecondary{grid-template-columns:1fr}
+  .snapBox.wide{grid-column:span 1}
+  .allocHead{display:none}
+  .allocRow2{grid-template-columns:1fr;text-align:left}
+}
+</style>
+</head>
+<body>
+
+<aside class="sb" id="sb"></aside>
+<div class="main">
+  <div class="top" id="topBar"></div>
+  <div class="content" id="app"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= ONE data model + ONE calculation engine ================= */
+const LEAD = {
+  id:"L-0010003", title:"Dr", first:"James", last:"H", age:45, gender:"Male",
+  city:"Dubai", country:"UAE", nationality:"Indian", residency:"Expat",
+  smoker:"Non-Smoker", marital:"Married",
+  occupation:"Senior Specialist", sector:"Healthcare Professional",
+  source:"Agency Referral", retireAge:60,
+  factors:[["Occupational segment",35,82,"Healthcare is among the highest-propensity segments in the Gulf."],
+           ["Income tier",25,85,"Annual income sits mid-range of the segment benchmark."],
+           ["Age & life stage",25,90,"45 with dependants — Family Builder, peak buying window."],
+           ["Lead source",15,78,"Agency referral — strong warmth signal, active intent."]],
+  spouse:{name:"Sarah", age:43, occ:"Homemaker", dep:"Fully dependent"},
+  children:[{name:"Samanvita", age:14, edu:"University"},{name:"Aarav", age:9, edu:"University"}],
+  fin:{ incomeMo:10000, expMo:5000, savings:10000, liab:20000, cover:100000, savingsCapMo:3000,
+        multLP:10, multCI:5, multAD:10, eduPerChild:200000, retIncome:84000, drawdownYrs:25 },
+  commitMo:2000,
+  goals:["Lifestyle Protection","Critical Illness","Accidental Death & Disability","Savings/Future Aspirations","Retirement"],
+  alloc:{ "Lifestyle Protection":25,"Critical Illness":20,"Accidental Death & Disability":5,"Savings/Future Aspirations":20,"Retirement":30 },
+  products:{ "Lifestyle Protection":"FutureProtect Term Life","Savings/Future Aspirations":"Future Protect Savings",
+             "Retirement":"International Wealth Builder","Critical Illness":"Critical Illness Care Plus",
+             "Accidental Death & Disability":"Income Protect Plus" },
+  quoted:{ "Lifestyle Protection":256 },
+  selected:{ "Lifestyle Protection":true,"Critical Illness":true,"Accidental Death & Disability":true,"Savings/Future Aspirations":true,"Retirement":true },
+  goalAmt:{}, chosenProduct:{}, premium:{}, premiumTouched:{}, premFreq:{}, term:{}, covAmt:{}, currency:{},
+  growth:8
+};
+const GOAL_DEFS = {
+  "Lifestyle Protection":{code:"LP", desc:"Income replacement for loved ones.", gapKey:"lp",
+    products:[
+      {key:"livelife",name:"Live Life",tag:"Essential",desc:"Provides comprehensive protection with stable death benefits."},
+      {key:"futureprotect",name:"Future Protect",tag:"Best seller",desc:"Highly customizable protection options for growing families."}
+    ]},
+  "Critical Illness":{code:"CI", desc:"Lump sum for major health events.", gapKey:"ci",
+    products:[
+      {key:"ciplus",name:"Critical Illness Care Plus",tag:"Health",desc:"Lump sum payout for 36 major critical illnesses."}
+    ]},
+  "Accidental Death & Disability":{code:"AB", desc:"Coverage for accidents and disability.", gapKey:"ad",
+    products:[
+      {key:"forever",name:"Forever",tag:"Accident",desc:"Provides long-term accidental coverage with double benefits."},
+      {key:"incomeprotectplus",name:"Income Protect Plus",tag:"Income replacement",desc:"Regular income payout options in case of accidental disability."}
+    ]},
+  "Savings/Future Aspirations":{code:"SVNG", desc:"Build savings to achieve future financial goals.", gapKey:null,
+    products:[
+      {key:"futureprotect",name:"Future Protect",tag:"Savings focused",desc:"Flexible savings options with conservative growth profiles."},
+      {key:"iwb",name:"International Wealth Builder",tag:"Premium",desc:"High-yield wealth accumulation pathways with offshore asset access."}
+    ]},
+  "Retirement":{code:"RP", desc:"Sustainable income in later years.", gapKey:null,
+    products:[
+      {key:"iwb",name:"International Wealth Builder",desc:"Comprehensive lifestyle protection with investment options."},
+      {key:"secure_future_plus",name:"Secure Future Plus",tag:"Savings focused",desc:"Savings-focused plan to build wealth while protecting lifestyle."},
+      {key:"family_shield_pro",name:"Family Shield Pro",tag:"Family cover",desc:"Family-wide coverage with education and lifestyle protection."},
+      {key:"term_life_basic",name:"Term Life Basic",tag:"Essential",desc:"Essential term protection with streamlined lifestyle coverage."}
+    ]}
+};
+const OTHER_LEADS=[
+  {id:"L-2029052",n:"Nikhil Tandon",seg:"Energy Sector",inc:"$460K",src:"Google Ad",st:["Working","#5A9E1E"],sc:79,cl:"hot",av:"#E67E22"},
+  {id:"L-2029652",n:"Omar Al-Sulami",seg:"Energy Sector",inc:"$410K",src:"Trade Show",st:["New","#0090DA"],sc:74,cl:"warm",av:"#C0392B"},
+  {id:"L-2025652",n:"Mohan Nair",seg:"IT Professional",inc:"$425K",src:"Meta Ad",st:["Nurturing","#B26A00"],sc:77,cl:"warm",av:"#16A085"},
+  {id:"L-2031852",n:"Anjali Agarwal",seg:"Construction",inc:"$200K",src:"Trade Show",st:["New","#0090DA"],sc:73,cl:"warm",av:"#8E44AD"},
+  {id:"L-2028252",n:"David MacDonald",seg:"Maritime & Energy",inc:"$250K",src:"Walk-in",st:["Lost","#94A3B2"],sc:62,cl:"cold",av:"#7F8C8D",lost:true},
+];
+const fmt=n=>"$"+Math.round(n).toLocaleString("en-US");
+const fmtM=n=>n>=1e6?"$"+(n/1e6).toFixed(2)+"M":"$"+Math.round(n/1e3)+"K";
+function fv(m,ratePct,yrs){const i=ratePct/1200,n=yrs*12;return m*((Math.pow(1+i,n)-1)/i);}
+function calc(){
+  const f=LEAD.fin, yr=f.incomeMo*12;
+  const lp=yr*f.multLP-f.cover, ci=yr*f.multCI, ad=yr*f.multAD, total=lp+ci+ad;
+  const edu=LEAD.children.length*f.eduPerChild, ret=f.retIncome*f.drawdownYrs;
+  const surplus=f.incomeMo-f.expMo;
+  const pct=surplus>0?Math.round(LEAD.commitMo/surplus*100):0;
+  const verdict=pct<=40?["ok","Affordable"]:pct<=60?["tight","Affordable — tight"]:["rev","Review recommended"];
+  const score=Math.round(LEAD.factors.reduce((a,[,w,v])=>a+w*v/100,0));
+  const shareLP=Math.round(lp/total*100), shareCI=Math.round(ci/total*100);
+  const funded=LEAD.goals.filter(g=>gapOf(g,{lp,ci,ad,edu,ret})>0&&LEAD.alloc[g]>0);
+  const prem=g=>LEAD.quoted[g]??Math.round(LEAD.commitMo*LEAD.alloc[g]/100);
+  const premTotal=funded.reduce((a,g)=>a+prem(g),0);
+  const premPct=surplus>0?Math.round(premTotal/surplus*100):0;
+  return {yr,lp,ci,ad,total,edu,ret,surplus,pct,verdict,score,shareLP,shareCI,shareAD:100-shareLP-shareCI,funded,prem,premTotal,premPct};
+}
+function gapOf(g,C){C=C||calc();return{"Lifestyle Protection":C.lp,"Savings/Future Aspirations":C.edu,"Retirement":C.ret,"Critical Illness":C.ci,"Accidental Death & Disability":C.ad}[g];}
+(()=>{const C=calc();
+  LEAD.goalAmt={ "Lifestyle Protection":Math.round(C.lp),"Critical Illness":Math.round(C.ci),
+    "Accidental Death & Disability":Math.round(C.ad),"Savings/Future Aspirations":"","Retirement":"" };
+})();
+
+/* ================= state ================= */
+let view="dash", step3=1, filter="All", outcome=null, planTab=0;
+let planSubStep = 0;
+LEAD.planSetup = {
+  contribution: 5000,
+  frequency: "Monthly",
+  term: 20,
+  dumpIn: 0,
+  risk: "Balanced",
+  funds: {
+    "Global Equity Index Fund": 50,
+    "US Technology Growth": 0,
+    "Emerging Markets": 0,
+    "Global Corporate Bond": 40,
+    "Money Market Secure": 10
+  },
+  riders: {
+    "Accidental Death & Dismemberment": true,
+    "Critical Illness Cover": false,
+    "Waiver of Premium": true
+  },
+  events: [
+    { type: "Top-up", amount: 5000, year: 5 }
+  ]
+};
+const PHASES=["Lead Management","Pre-Meeting Practice","Needs Analysis","Solution & Close"];
+const steps3=["Client & Family","Financial Snapshot","Goal Planner","Choose your Plan"];
+const phaseIdx={p1:1,p2:2,p3:3,p4:4};
+const app=document.getElementById("app");
+
+/* ================= shell chrome ================= */
+function renderSidebar(){
+  const C=calc();
+  const sub3=view==="p3"?`<div class="sec">Needs Analysis steps</div><div class="sub2">${steps3.map((st,i)=>`<button class="sbi ${i+1===step3?"on":""}" data-go3="${i+1}">${i+1<step3?"✓ ":""}<span class="lb">${st}</span></button>`).join("")}</div>`:"";
+  document.getElementById("sb").innerHTML=`
+    <div class="sLogo"><svg width="22" height="20" viewBox="0 0 26 24"><path d="M2 22 L8 2 L13 14 L18 2 L24 22 H19 L16.5 13 L13 21 L9.5 13 L7 22 Z" fill="#0090DA"/><path d="M8 2 L13 14 L11 19 L5.5 5.5 Z" fill="#A4CE4E"/></svg><span class="lt">MetLife<small>SMART PLANNER 360°</small></span></div>
+    <button class="sbi ${view==="dash"?"on":""}" data-nav="dash"><span class="ic">⌂</span><span class="lb">Dashboard</span></button>
+    <button class="sbi"><span class="ic">◫</span><span class="lb">Pipeline</span></button>
+    <button class="sbi"><span class="ic">▤</span><span class="lb">Reports</span></button>
+    <button class="sbi"><span class="ic">◎</span><span class="lb">Market Intelligence</span></button>
+    <button class="sbi"><span class="ic">✎</span><span class="lb">Resources</span></button>
+    <div class="sec">Active client</div>
+    <div class="cMini"><span class="avatar">DJ</span><div><div class="n">${LEAD.title} ${LEAD.first} ${LEAD.last}</div><div class="s">${C.score} HOT · ${LEAD.city} · ${fmt(C.yr)}/yr</div></div></div>
+    ${sub3}
+    <div class="sbSpace"></div>
+    <div class="sbFoot"><span class="avatar">AT</span><div><div class="n">Ajay Thomas</div><div class="s">Senior Advisor · UAE</div></div></div>`;
+}
+function renderTop(){
+  const phase=phaseIdx[view]||0;
+  const crumb=phase?`Skill ${phase} of 4<b>${PHASES[phase-1]}${view==="p3"?" · "+steps3[step3-1]:""}</b>`:`Advisor workspace<b>Dashboard — UAE / Gulf Region</b>`;
+  const seg=phase?`<div class="seg">${PHASES.map((pN,i)=>{const sN=i+1,cls=sN<phase?"done":sN===phase?"cur":"";
+    return `<button class="${cls}" data-nav="p${sN}"><span class="d">${sN<phase?"✓":sN}</span>${pN}</button>`;}).join("")}</div>`
+    :`<button class="btnP" style="margin-left:auto;padding:8px 16px" data-nav="p1">Open top lead →</button>`;
+  document.getElementById("topBar").innerHTML=`
+    <button class="iconBtn" id="sbTgl" title="Collapse navigation">☰</button>
+    <div class="bc">${crumb}</div>${seg}`;
+}
+
+/* ================= content builders ================= */
+/* ---- shared AI rail (in-grid tile, not a drawer) ---- */
+function rail(title,sub,items){return `<div class="railWrap"><div class="railHead">${title}<small>${sub}</small></div>
+  <div class="railBody">${items.map(([t,b,open])=>`<div class="gc ${open?"open":""}"><button class="gh" data-gc>${t}<span class="ar">▾</span></button><div class="gb">${b}</div></div>`).join("")}</div></div>`;}
+
+/* ---- one shared pattern for every read-only calculated field ---- */
+function calcField(label,value,source,id){
+  return `<div class="f calc"><label>${label} <span class="calcIc" title="Calculated from ${source}">🧮</span></label>
+    <input ${id?`id="${id}"`:""} value="${value}" readonly>
+    <div class="calcSrc">from ${source}</div></div>`;
+}
+
+/* ---- dashboard ---- */
+function dashView(){
+  const C=calc();
+  const rows=[{me:true,id:LEAD.id,n:`${LEAD.title} ${LEAD.first} ${LEAD.last}`,seg:LEAD.sector,inc:fmt(C.yr),src:LEAD.source,st:["Working","#5A9E1E"],sc:C.score,cl:C.score>=78?"hot":"warm",av:"#0090DA"},...OTHER_LEADS];
+  const shown=rows.filter(r=>filter==="All"||r.cl===filter.toLowerCase());
+  const active=rows.filter(r=>!r.lost).length, hot=rows.filter(r=>r.cl==="hot"&&!r.lost).length,
+        warm=rows.filter(r=>r.cl==="warm"&&!r.lost).length;
+  return `<div class="pgrid">
+    <div class="kpi c3"><div class="l">Active leads (CRM)</div><div class="v">${active}</div><div class="s">in pipeline · lost excluded</div></div>
+    <div class="kpi c3"><div class="l">Hot (score ≥ 78)</div><div class="v">${hot}</div><div class="s">high priority</div></div>
+    <div class="kpi c3"><div class="l">Warm (55–77)</div><div class="v">${warm}</div><div class="s">requires nurturing</div></div>
+    <div class="kpi c3"><div class="l">Est. premium potential</div><div class="v">$1.9M</div><div class="s">annualised, active leads</div></div>
+
+    <div class="card c8">
+      <h3>My leads</h3>
+      <div class="filterRow">
+        ${["All","Hot","Warm","Cold"].map(f=>`<button class="${filter===f?"on":""}" data-filter="${f}">${f}</button>`).join("")}
+        <span class="cnt">Showing ${shown.length} of ${rows.length} · one score threshold everywhere</span>
+      </div>
+      <table class="leads"><thead><tr><th>Lead</th><th>Segment</th><th>Income</th><th>Source</th><th>Status</th><th>Score</th><th></th></tr></thead><tbody>
+      ${shown.map(r=>`<tr class="${r.lost?"lost":""}">
+        <td><span class="lAv" style="background:${r.av}">${r.n.split(" ").map(w=>w[0]).slice(0,2).join("")}</span><b style="color:var(--navy)">${r.n}</b></td>
+        <td>${r.seg}</td><td>${r.inc}</td><td>${r.src}</td>
+        <td><span class="dot" style="background:${r.st[1]}"></span>${r.st[0]}</td>
+        <td><span class="sbdg ${r.cl}">${r.sc} ${r.cl.toUpperCase()}</span></td>
+        <td>${r.me?'<button class="btnP" style="padding:5px 13px;font-size:.72rem" data-nav="p1">Open →</button>':'<a style="color:var(--blue);font-weight:600;font-size:.74rem">Open</a>'}</td></tr>`).join("")}
+      </tbody></table>
+    </div>
+
+    <div class="c4 stack">
+      <div class="card">
+        <h3>Next best actions</h3>
+        <p class="cap">SMART 360 · ranked by score × recency</p>
+        <div class="nba"><span class="ic">📞</span><div><div class="t">Call ${LEAD.title} ${LEAD.first} ${LEAD.last} (${C.score} HOT)</div><div class="d">Best window 7:30–8:15 AM before rounds · script ready</div></div></div>
+        <div class="nba"><span class="ic">✉</span><div><div class="t">Follow up with Nikhil Tandon (79 HOT)</div><div class="d">Google Ad lead, no contact in 4 days</div></div></div>
+        <div class="nba"><span class="ic">⚡</span><div><div class="t">2 new Trade Show leads await first touch</div><div class="d">Omar Al-Sulami · Anjali Agarwal</div></div></div>
+      </div>
+      <div class="card">
+        <h3>4-skill workflow</h3>
+        <p class="cap">Jump in with ${LEAD.title} ${LEAD.first}</p>
+        ${[["01","Lead Management","Profile, score & pitch","p1"],["02","Pre-Meeting Practice","Script + AI roleplay","p2"],
+           ["03","Needs Analysis","Structured 4-step review","p3"],["04","Solution & Close","Products + objections","p4"]]
+          .map(([n,t,d,v])=>`<button class="skillRow" data-nav="${v}"><span class="no">${n}</span><span><span class="t">${t}</span><div class="d">${d}</div></span><span class="go">→</span></button>`).join("")}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---- phase 1 ---- */
+function beats1(){const C=calc();return [
+ ["Open — rapport","OPEN",`“${LEAD.title} ${LEAD.first}, thank you for taking a moment — I'll be brief. I work with senior medical professionals across the UAE, and I know the demands on a specialist of your standing leave little room outside the clinical.”`],
+ ["Hook — pattern interrupt","HOOK",`“For senior specialists in the UAE, the two most common vulnerabilities are <span class="chip">income continuity</span> and the <span class="chip">portability gap</span> when employer-linked cover ends with a role change.”`],
+ ["Peer proof","PEER STORY",`“A senior specialist in Dubai assumed his group scheme had him covered. The review showed non-portable cover, capped at two times basic salary, lapsing within 30 days of any role change.”`],
+ ["Value frame","PRE-EMPT",`“Employer cover is a good foundation — the question is whether it was calibrated to <b>your</b> income of <span class="chip">${fmt(C.yr)}/yr</span> and ${1+LEAD.children.length} dependants, not the average employee.”`],
+ ["Commitment & timing close","CLOSE",`“A focused 25-minute conversation — no paperwork, no obligation. You'll leave with a clear view of your protection window. When works best?”`]];}
+const objections1=[
+ ["“My hospital provides me with medical and life cover.”","That's the right starting point. Group cover is sized for the average employee — not your income level and family stage. The 25 minutes confirms whether it's calibrated to where you are today."],
+ ["“I'm very busy — send me something by email.”","I wouldn't send a generic document that doesn't reflect your position. 25 minutes structured around your situation makes anything I share afterwards actually relevant."],
+ ["“I'm healthy and have time on my side.”","Genuinely good news — and precisely why now is the moment. The best structures are built while health is strong and options are open."]];
+function p1View(){
+  const C=calc();
+  return `<div class="pgrid">
+    <div class="card c4">
+      <h3>Lead qualification</h3>
+      <p class="cap">Score = exact weighted sum of the four factors. Every number reproducible.</p>
+      <div class="ring" style="--p:${C.score}"><div class="inn"><b>${C.score}</b><s>HOT LEAD</s></div></div>
+      ${LEAD.factors.map(([t,w,v,d])=>`<div class="factRow"><div class="t">${t}<b>${v}/100</b></div><div class="w">weight ${w}% — ${d}</div><div class="fbar"><i style="width:${v}%"></i></div></div>`).join("")}
+      <div class="secLbl">Persona insight · AI-generated</div>
+      <div class="aiTxt" id="persona1">
+        <span class="short" style="font-size:.78rem;color:var(--grey)">At ${LEAD.age}, ${LEAD.title} ${LEAD.first} combines <span class="chip">peak earning</span> with <span class="chip">${1+LEAD.children.length} dependants</span> and a <span class="chip">${fmtM(C.lp)}</span> lifestyle-protection gap. <button class="rm" data-rm="persona1">Read more ↓</button></span>
+        <span class="full" style="font-size:.78rem;color:var(--grey)">At ${LEAD.age}, ${LEAD.title} ${LEAD.first} ${LEAD.last} sits at the intersection of peak earning potential and peak family responsibility. Earning ${fmt(C.yr)} annually, he supports ${1+LEAD.children.length} dependants while carrying a ${fmtM(C.lp)} lifestyle-protection gap. The Medical Professional segment faces compounded risk: licence-dependent income, contract-bound employer cover, elevated burnout-driven career disruption across GCC healthcare. <button class="rm" data-rm="persona1">Show less ↑</button></span>
+      </div>
+    </div>
+    <div class="card c5">
+      <h3>3-minute call script</h3>
+      <p class="cap">Tap a beat to expand. Check a beat off once you've reviewed it. <span id="p1count" data-label="talking points reviewed" style="font-weight:700;color:var(--green)">0 of 5 talking points reviewed</span></p>
+      ${beats1().map(([t,intent,txt],i)=>`
+        <div class="acc" id="b1-${i}"><button data-acc="b1-${i}"><input type="checkbox" class="beatChk" data-cnt="p1count" title="Mark this talking point as reviewed" onclick="event.stopPropagation()"><span>Beat ${i+1} · ${t}</span><span class="intent">${intent}</span><span class="ar">▾</span></button>
+        <div class="bd">${txt}</div></div>`).join("")}
+      <div class="secLbl">Objection handling</div>
+      ${objections1.map(([q,a],i)=>`<div class="acc" id="o1-${i}"><button data-acc="o1-${i}">💬 ${q}<span class="ar">▾</span></button><div class="bd">↳ ${a}</div></div>`).join("")}
+    </div>
+    <div class="c3 stack">
+      ${rail("Key information to solicit","Ask these during the call",[
+        ["Employer cover structure","“Is your current cover portable if your role or hospital group changes?”",1],
+        ["Primary concern","“Income protection, family security, or retirement that matches your lifestyle?”",0],
+        ["Family commitments","“Any specific commitments you're planning for — education or property?”",0]])}
+      ${rail("Advisor strategy","How to run this call",[
+        ["Tone & timing",`Analytical HOT-tier — diagnostic language, no emotional appeals. Call 7:30–8:15 AM or after 6 PM. Key figure ready: <b>${fmtM(C.lp)}</b>.`,1],
+        ["Emotional anchor","Family continuity and legacy — connect every structural gap to the people depending on him.",0]])}
+    </div>
+  </div>${navRow(1)}`;
+}
+
+/* ---- phase 2 ---- */
+function beats2(){const C=calc();return [
+ ["Acknowledging his professional world","OPEN",`“I work specifically with senior medical professionals across Dubai — my goal is to be direct and focus only on what's financially material at your level and life stage.”`,"Open with brevity and credibility — not flattery."],
+ ["The risk-aware clinician question","MIRROR",`“You spend your professional life making decisions under uncertainty. So: when did you last apply that same diagnostic rigour to your own financial structure?”`,"Pause after asking — do not rush to fill the silence."],
+ ["Your hospital cover is not enough","INTERRUPT",`“Group life cover is typically two times base salary — roughly <span class="chip">${fmt(C.yr*2)}</span> on your income. Against your protection need, that leaves a gap of <span class="chip">${fmtM(C.lp-C.yr*2+LEAD.fin.cover)}</span>.”`,"Introduce the dollar gap calmly — the contrast is the moment of productive discomfort."],
+ ["The retirement number, anchored","NUMBER",`“To replicate your lifestyle in retirement without a hospital salary: <span class="chip">${fmtM(C.ret)}</span> — ${fmt(LEAD.fin.retIncome)}/yr over ${LEAD.fin.drawdownYrs} years. That's the target, starting now.”`,"State the figure, then stop speaking. The pause creates his question: 'so how do I get there?'"],
+ ["Your family deserves certainty","ANCHOR",`“Three people depend entirely on the continuation of your ability to practise. For a family you've built, certainty isn't a luxury — it's the foundation.”`,"Warm and affirming — speak to continuity and legacy, not fear."],
+ ["Two times, your choice","CLOSE",`“Two slots this week for a focused 40-minute session — Wednesday 6:30 PM or Thursday 7:00 AM before rounds. Which works better?”`,"Binary close removes decision fatigue. Do not add a third option."]];}
+function p2View(){
+  return `<div class="pgrid">
+    <div class="card c7">
+      <h3>Personalised pitch — F2F meeting script</h3>
+      <p class="cap">Every figure pulled live from the client's data. <span id="p2count" data-label="beats practiced" style="font-weight:700;color:var(--green)">0 of 6 beats practiced</span></p>
+      ${beats2().map(([t,intent,txt,note],i)=>`
+        <div class="acc" id="b2-${i}"><button data-acc="b2-${i}"><input type="checkbox" class="beatChk" data-cnt="p2count" title="Mark this beat as practiced" onclick="event.stopPropagation()"><span>Beat ${i+1} · ${t}</span><span class="intent">${intent}</span><span class="ar">▾</span></button>
+        <div class="bd">${txt}<div class="q">Advisor note — ${note}</div></div></div>`).join("")}
+    </div>
+    <div class="c5 stack">
+      ${rail("Persona, risk & culture","All intelligence, one tap deep",[
+        ["Persona insight",`${LEAD.age}, Family Builder, analytical HOT-tier. Aspiration: <i>“protection as sophisticated as the care you deliver.”</i>`,1],
+        ["Occupation risk profile","Mental health: elevated (compassion fatigue, GCC burnout). Use as empathy context, not alarm.",0],
+        ["Motivation hierarchy","Family continuity 38% · income 27% · retirement 22% · legacy 13% <i>(model-inferred)</i>",0],
+        ["Cultural briefing","Peer register, evidence-led. Predicted objection: “my hospital covers me.” Post-meeting: one-page summary via WhatsApp within 2 hours.",0]])}
+      <div class="card">
+        <h3>Configure roleplay session</h3>
+        <p class="cap">Practice with an AI avatar of ${LEAD.title} ${LEAD.first} before the real meeting.</p>
+        <div class="grid3">
+          <div class="f"><label>Customer mood</label><select id="rpMood"><option>Challenging</option><option>Neutral</option><option>Receptive</option></select></div>
+          <div class="f"><label>Cycle stage</label><select><option>Uncovering needs</option><option>Presenting</option><option>Closing</option></select></div>
+          <div class="f"><label>Proficiency</label><select><option>Seasoned</option><option>New</option></select></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btnP" id="launchRP">▶ Launch roleplay</button>
+          <button class="btnS">Save configuration</button>
+        </div>
+        <div id="rpMsg"></div>
+      </div>
+    </div>
+  </div>${navRow(2)}`;
+}
+
+/* ---- phase 3 (merged 4-step) ---- */
+function profileFields(){return `
+  <div class="secLbl">Personal details</div>
+  <div class="grid3">
+    <div class="f"><label>Title <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><select><option>Dr</option><option>Mr</option><option>Ms</option></select></div>
+    <div class="f"><label>First name <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.first}"></div>
+    <div class="f"><label>Last name <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.last}"></div>
+  </div>
+  <div class="grid3" style="margin-top:9px">
+    <div class="f"><label>Age <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.age}"></div>
+    <div class="f"><label>Nationality <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.nationality}"></div>
+    <div class="f"><label>Residency</label><input value="${LEAD.residency}"></div>
+  </div>
+  <div class="grid3" style="margin-top:9px">
+    <div class="f"><label>City <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.city}"></div>
+    <div class="f"><label>Marital status <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.marital}"></div>
+    <div class="f"><label>Smoker status</label><input value="${LEAD.smoker}"></div>
+  </div>
+  <div class="secLbl">Work & retirement</div>
+  <div class="grid3">
+    <div class="f"><label>Occupation <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.occupation}"></div>
+    <div class="f"><label>Planned retirement age</label><input value="${LEAD.retireAge}"></div>
+    ${calcField("Years to retirement",LEAD.retireAge-LEAD.age,"planned retirement age − current age")}
+  </div>`;}
+function familyFields(){return `
+  <div class="secLbl">Spouse</div>
+  <div class="grid3">
+    <div class="f"><label>Name <span class="src" title="Synced from CRM — editing here overrides it for this session">CRM</span></label><input value="${LEAD.spouse.name}"></div>
+    <div class="f"><label>Age</label><input value="${LEAD.spouse.age}"></div>
+    <div class="f"><label>Financial dependency</label><input value="${LEAD.spouse.dep}"></div>
+  </div>
+  <div class="secLbl">Children (${LEAD.children.length}) — drives the education goal automatically</div>
+  ${LEAD.children.map(c=>`<div class="grid3" style="margin-bottom:8px">
+    <div class="f"><label>Name</label><input value="${c.name}"></div>
+    <div class="f"><label>Age</label><input value="${c.age}"></div>
+    <div class="f"><label>Education goal</label><input value="${c.edu}"></div></div>`).join("")}
+  <button class="btnS" style="width:100%;border-style:dashed">+ Add dependant (child, parent, or other)</button>`;}
+function finFields(){const C=calc();return `
+  <div class="secLbl">Income & expenses (USD)</div>
+  <div class="grid2">
+    <div class="f"><label>Monthly income *</label><input id="inIncome" type="number" value="${LEAD.fin.incomeMo}"></div>
+    <div class="f"><label>Monthly expenses *</label><input id="inExp" type="number" value="${LEAD.fin.expMo}"></div>
+    <div class="f"><label>Savings</label><input type="number" value="${LEAD.fin.savings}"></div>
+    <div class="f"><label>Existing life cover</label><input id="inCover" type="number" value="${LEAD.fin.cover}"></div>
+    ${calcField("Monthly surplus",fmt(C.surplus),"monthly income − monthly expenses","outSurplus")}
+    ${calcField("Annual budget",fmt(C.surplus*12),"monthly surplus × 12","outBudget")}
+  </div>
+  <div class="secLbl">Protection gaps — live calculation</div>
+  <div class="gapRow">
+    ${[["Lifestyle Protection","gLP",C.lp,`${LEAD.fin.multLP} × annual income ${fmt(C.yr)} − existing cover ${fmt(LEAD.fin.cover)}`],
+       ["Critical Illness","gCI",C.ci,`${LEAD.fin.multCI} × annual income ${fmt(C.yr)}`],
+       ["Accidental Death & Disability","gAD",C.ad,`${LEAD.fin.multAD} × annual income ${fmt(C.yr)}`]]
+      .map(([l,id,v,how])=>`<div class="gap" id="${id}"><div class="l">${l}</div><div class="v">${fmtM(v)}</div>
+        <button class="how" data-how="${id}">How is this calculated?</button>
+        <div class="howBox">${how}. Multiplier defaults by age band — adjustable.</div></div>`).join("")}
+  </div>`;}
+
+/* ---- Goal Planner (step 3) ---- */
+function activeGoals(){return LEAD.goals.filter(g=>LEAD.selected[g]);}
+function moveActive(g,dir){
+  const act=activeGoals(), idx=act.indexOf(g), swapWith=act[idx+dir]; if(!swapWith)return;
+  const gi=LEAD.goals.indexOf(g), si=LEAD.goals.indexOf(swapWith);
+  [LEAD.goals[gi],LEAD.goals[si]]=[LEAD.goals[si],LEAD.goals[gi]];
+}
+function allocRow(g,i,arr){
+  const amt=LEAD.goalAmt[g];
+  return `<div class="allocRow2" data-row="${g}">
+    <span class="no2">${i+1}</span>
+    <span class="mv2"><button data-au="${g}" title="Move ${g} up in priority" ${i===0?"disabled":""}>↑</button><button data-ad="${g}" title="Move ${g} down in priority" ${i===arr.length-1?"disabled":""}>↓</button></span>
+    <span class="nm2">${g}</span>
+    <span class="fAlloc"><input type="number" min="0" max="100" data-allocpct="${g}" value="${LEAD.alloc[g]??0}"><i>%</i></span>
+    <span class="fAmt"><input type="text" inputmode="numeric" placeholder="Enter goal amount" data-goalamt="${g}" value="${amt===""?"":fmt(amt)}"></span>
+    <button class="trash" data-remove="${g}" title="Remove ${g} from this plan">🗑</button>
+  </div>`;
+}
+function goalPlannerView(){
+  const C=calc(), act=activeGoals();
+  return `<div class="card">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="stepIc">1</span><h3 style="margin:0">Customer Financial Snapshot</h3>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span style="font-size:.72rem;color:var(--grey)">Currency</span>
+        <button class="btnS" id="currTgl" style="padding:6px 12px">${LEAD.currency.global==="KWD"?"KWD • د.ك":"USD • $"}</button>
+      </div>
+    </div>
+    <p class="cap">Enter the customer's monthly income, expenses and savings capacity before defining goals.</p>
+    <div class="snapGrid">
+      <div class="snapBox"><div class="l">Monthly income</div><div class="v">${fmt(LEAD.fin.incomeMo)}</div></div>
+      <div class="snapBox"><div class="l">Monthly expenses</div><div class="v">${fmt(LEAD.fin.expMo)}</div></div>
+      <div class="snapBox"><div class="l">Current protection Gap</div><div class="v">${fmt(C.total)}</div></div>
+      <div class="snapBox wide"><div class="l">Estimated savings capacity</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <div style="position:relative;flex:1"><input id="inSavCap" type="number" value="${LEAD.fin.savingsCapMo}" style="padding-right:56px"><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:.66rem;color:var(--grey)">/ month</span></div>
+          <div style="text-align:right;white-space:nowrap"><b style="font-size:1.05rem;color:var(--navy)" id="savCapYr">${fmt(LEAD.fin.savingsCapMo*12)}</b><div style="font-size:.6rem;color:var(--grey)">/ year</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap" style="margin-top:8px">High-level overview of the customer's income, expenses, savings and current protection before setting defined goals.</p>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;align-items:center;gap:8px"><span class="stepIc">2</span><h3 style="margin:0">Customer Priority Needs</h3></div>
+    <p class="cap">Select the protection or savings needs that are relevant for this customer.</p>
+    <div class="needGrid">
+      ${LEAD.goals.map(g=>{const d=GOAL_DEFS[g],on=LEAD.selected[g];
+        return `<button class="needCard ${on?"on":""}" data-need="${g}"><div class="chk">${on?"✓":""}</div><div class="nm">${g}</div><div class="d">${d.desc}</div></button>`;}).join("")}
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;align-items:center;gap:8px"><span class="stepIc">3</span><h3 style="margin:0">Prioritize and Allocate</h3></div>
+    <p class="cap">Set the allocation percentage for each selected goal.</p>
+    ${act.length?`<div class="allocHead"><span></span><span></span><span>Need</span><span>Priority weight (%)</span><span>Goal amount</span><span></span></div>
+    ${act.map((g,i)=>allocRow(g,i,act)).join("")}
+    <div class="allocBar"><span>Total Priority Weight</span><span id="allocTotal2"></span></div>
+    <p class="cap" id="allocMsg" style="margin-top:6px"></p>
+    <p class="cap" style="margin-top:4px">Priority weight reflects how important this need is relative to the others selected — it is independent of the dollar goal amount, and the two don't need to line up.</p>`
+    :`<p class="cap">No needs selected — choose at least one priority need above.</p>`}
+  </div>`;
+}
+
+/* ---- Choose your Plan (step 4) ---- */
+function goalConfigured(g){const key=LEAD.chosenProduct[g]||GOAL_DEFS[g].products[0].key;return !!LEAD.premium[g+"|"+key];}
+function whyRecommended(g,sumAssured){
+  const def=GOAL_DEFS[g], gapLabel={lp:"lifestyle protection",ci:"critical illness",ad:"accidental death & disability"}[def.gapKey];
+  return gapLabel?`Covers the identified ${fmt(sumAssured)} ${gapLabel} gap from the Goal Planner.`
+    :`Supports the ${fmt(sumAssured)} ${g.toLowerCase()} target set in the Goal Planner.`;
+}
+function getSimulationData() {
+  const setup = LEAD.planSetup;
+  const term = setup.term;
+  const growth = LEAD.growth;
+  const dumpIn = setup.dumpIn;
+  
+  // Calculate annual contribution
+  let A = setup.contribution;
+  if (setup.frequency === "Monthly") A = setup.contribution * 12;
+  else if (setup.frequency === "Quarterly") A = setup.contribution * 4;
+  else if (setup.frequency === "Semi-annually") A = setup.contribution * 2;
+  
+  const Mc = A / 12;
+  
+  // Rider fee calculations
+  const accidental = setup.riders["Accidental Death & Dismemberment"];
+  const critical = setup.riders["Critical Illness Cover"];
+  const waiver = setup.riders["Waiver of Premium"];
+  const R = (accidental ? 15 : 0) + (critical ? 45 : 0) + (waiver ? A * 0.02 / 12 : 0);
+  
+  let data = [];
+  let val = dumpIn;
+  let paid = dumpIn;
+  
+  // Initial point
+  data.push({ year: 0, paid: paid, val: val, db: Math.max(60000, val) });
+  
+  for (let y = 1; y <= term; y++) {
+    for (let m = 1; m <= 12; m++) {
+      setup.events.forEach(ev => {
+        if (ev.year === y && m === 1 && ev.type === "Top-up") {
+          val += ev.amount;
+          paid += ev.amount;
+        }
+      });
+      
+      paid += Mc;
+      val = (val + Mc - R) * (1 + (growth / 1200) - 0.00083);
+      if (val < 0) val = 0;
+    }
+    
+    const db = Math.max(60000, val);
+    data.push({ year: y, paid: Math.round(paid), val: Math.round(val), db: Math.round(db) });
+  }
+  return data;
+}
+
+function generateSimulationSVG(data) {
+  const maxVal = Math.max(...data.map(d => Math.max(d.paid, d.val, d.db, 50000)));
+  const width = 500;
+  const height = 220;
+  const paddingLeft = 60;
+  const paddingRight = 20;
+  const paddingTop = 20;
+  const paddingBottom = 30;
+  
+  const mapX = (year) => paddingLeft + (year / data[data.length - 1].year) * (width - paddingLeft - paddingRight);
+  const mapY = (val) => height - paddingBottom - (val / maxVal) * (height - paddingTop - paddingBottom);
+  
+  let grid = "";
+  const steps = 5;
+  for (let i = 0; i <= steps; i++) {
+    const v = (maxVal / steps) * i;
+    const y = mapY(v);
+    grid += `<line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="#E1E8EE" stroke-width="1" />`;
+    grid += `<text x="${paddingLeft - 10}" y="${y + 4}" fill="#7C8FA0" font-size="9" text-anchor="end">${fmtM(v)}</text>`;
+  }
+  
+  let xLabels = "";
+  const yearStep = Math.max(1, Math.round(data.length / 10));
+  data.forEach((d, idx) => {
+    if (idx === 0 || d.year % yearStep === 0 || idx === data.length - 1) {
+      const x = mapX(d.year);
+      xLabels += `<text x="${x}" y="${height - 5}" fill="#7C8FA0" font-size="9" text-anchor="middle">Yr ${d.year}</text>`;
+    }
+  });
+  
+  const pointsPaid = data.map(d => `${mapX(d.year)},${mapY(d.paid)}`).join(" ");
+  const pointsVal = data.map(d => `${mapX(d.year)},${mapY(d.val)}`).join(" ");
+  const pointsDb = data.map(d => `${mapX(d.year)},${mapY(d.db)}`).join(" ");
+  
+  const areaPath = `M ${mapX(0)} ${height - paddingBottom} ` + data.map(d => `L ${mapX(d.year)} ${mapY(d.val)}`).join(" ") + ` L ${mapX(data[data.length-1].year)} ${height - paddingBottom} Z`;
+  
+  return `
+    <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto;">
+      ${grid}
+      ${xLabels}
+      <path d="${areaPath}" fill="rgba(0,144,218,0.1)" />
+      <polyline points="${pointsPaid}" fill="none" stroke="#46586A" stroke-width="2" stroke-dasharray="4,4" />
+      <polyline points="${pointsDb}" fill="none" stroke="#5A9E1E" stroke-dasharray="2,2" stroke-width="2" />
+      <polyline points="${pointsVal}" fill="none" stroke="#0090DA" stroke-width="3" />
+      <circle cx="${mapX(data[data.length-1].year)}" cy="${mapY(data[data.length-1].val)}" r="5" fill="#0090DA" />
+      <circle cx="${mapX(data[data.length-1].year)}" cy="${mapY(data[data.length-1].paid)}" r="4" fill="#46586A" />
+    </svg>
+  `;
+}
+
+function generateScenarioSVG(data) {
+  const setup = LEAD.planSetup;
+  const term = setup.term;
+  const growth = LEAD.growth;
+  const dumpIn = setup.dumpIn;
+  let A = setup.contribution;
+  if (setup.frequency === "Monthly") A = setup.contribution * 12;
+  else if (setup.frequency === "Quarterly") A = setup.contribution * 4;
+  else if (setup.frequency === "Semi-annually") A = setup.contribution * 2;
+  const Mc = A / 12;
+  const accidental = setup.riders["Accidental Death & Dismemberment"];
+  const critical = setup.riders["Critical Illness Cover"];
+  const waiver = setup.riders["Waiver of Premium"];
+  const R = (accidental ? 15 : 0) + (critical ? 45 : 0) + (waiver ? A * 0.02 / 12 : 0);
+  
+  const simWithGrowth = (gPct) => {
+    let pts = [];
+    let val = dumpIn;
+    pts.push({ year: 0, val: val });
+    for (let y = 1; y <= term; y++) {
+      for (let m = 1; m <= 12; m++) {
+        setup.events.forEach(ev => {
+          if (ev.year === y && m === 1 && ev.type === "Top-up") val += ev.amount;
+        });
+        val = (val + Mc - R) * (1 + (gPct / 1200) - 0.00083);
+        if (val < 0) val = 0;
+      }
+      pts.push({ year: y, val: Math.round(val) });
+    }
+    return pts;
+  };
+  
+  const midData = data;
+  const bestData = simWithGrowth(growth + 2);
+  const worstData = simWithGrowth(Math.max(0, growth - 3));
+  
+  const maxVal = Math.max(...bestData.map(d => d.val), 50000);
+  
+  const width = 500;
+  const height = 220;
+  const paddingLeft = 60;
+  const paddingRight = 20;
+  const paddingTop = 20;
+  const paddingBottom = 30;
+  
+  const mapX = (year) => paddingLeft + (year / term) * (width - paddingLeft - paddingRight);
+  const mapY = (val) => height - paddingBottom - (val / maxVal) * (height - paddingTop - paddingBottom);
+  
+  let grid = "";
+  const steps = 5;
+  for (let i = 0; i <= steps; i++) {
+    const v = (maxVal / steps) * i;
+    const y = mapY(v);
+    grid += `<line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="#E1E8EE" stroke-width="1" />`;
+    grid += `<text x="${paddingLeft - 10}" y="${y + 4}" fill="#7C8FA0" font-size="9" text-anchor="end">${fmtM(v)}</text>`;
+  }
+  
+  let xLabels = "";
+  const yearStep = Math.max(1, Math.round(term / 10));
+  for (let y = 0; y <= term; y += yearStep) {
+    const x = mapX(y);
+    xLabels += `<text x="${x}" y="${height - 5}" fill="#7C8FA0" font-size="9" text-anchor="middle">Yr ${y}</text>`;
+  }
+  
+  const pointsMid = midData.map(d => `${mapX(d.year)},${mapY(d.val)}`).join(" ");
+  const pointsBest = bestData.map(d => `${mapX(d.year)},${mapY(d.val)}`).join(" ");
+  const pointsWorst = worstData.map(d => `${mapX(d.year)},${mapY(d.val)}`).join(" ");
+  
+  return `
+    <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto;">
+      ${grid}
+      ${xLabels}
+      <polyline points="${pointsWorst}" fill="none" stroke="#C0392B" stroke-width="2" stroke-dasharray="3,3" />
+      <polyline points="${pointsBest}" fill="none" stroke="#5A9E1E" stroke-width="2" stroke-dasharray="3,3" />
+      <polyline points="${pointsMid}" fill="none" stroke="#0090DA" stroke-width="3" />
+      <circle cx="${mapX(term)}" cy="${mapY(midData[midData.length-1].val)}" r="4" fill="#0090DA" />
+      <circle cx="${mapX(term)}" cy="${mapY(bestData[bestData.length-1].val)}" r="4" fill="#5A9E1E" />
+      <circle cx="${mapX(term)}" cy="${mapY(worstData[worstData.length-1].val)}" r="4" fill="#C0392B" />
+    </svg>
+  `;
+}
+
+function getValidSubSteps(g) {
+  if (g === "Retirement" || g === "Savings/Future Aspirations") {
+    return [0, 1, 2, 3, 4, 5, 6];
+  } else {
+    return [0, 3, 6];
+  }
+}
+
+function getGoalMonthlyPremium(g) {
+  if (!goalConfigured(g)) return 0;
+  const key = LEAD.chosenProduct[g] || GOAL_DEFS[g].products[0].key;
+  if (g === "Retirement" || g === "Savings/Future Aspirations") {
+    const setup = LEAD.planSetup;
+    let monthly = setup.contribution;
+    if (setup.frequency === "Yearly") monthly = setup.contribution / 12;
+    else if (setup.frequency === "Quarterly") monthly = setup.contribution / 3;
+    else if (setup.frequency === "Semi-annually") monthly = setup.contribution / 6;
+    return Math.round(monthly);
+  } else {
+    const ann = LEAD.premium[g + "|" + key] || 0;
+    return Math.round(ann / 12);
+  }
+}
+
+function renderSolutionSummary(tabs) {
+  const act = activeGoals();
+  
+  let totalSumAssured = 0;
+  act.forEach(g => {
+    totalSumAssured += +LEAD.goalAmt[g] || 0;
+  });
+  
+  let totalMonthlyPremium = 0;
+  act.forEach(g => {
+    totalMonthlyPremium += getGoalMonthlyPremium(g);
+  });
+  
+  const cards = act.map((g, idx) => {
+    const def = GOAL_DEFS[g];
+    const key = LEAD.chosenProduct[g] || def.products[0].key;
+    const prod = def.products.find(p => p.key === key) || def.products[0];
+    const sumAssured = +LEAD.goalAmt[g] || 0;
+    
+    let term = 20;
+    let freq = "Monthly";
+    let estPremium = 0;
+    let projectionLabel = "Maturity projection";
+    let projectionValue = "$0";
+    
+    if (g === "Retirement" || g === "Savings/Future Aspirations") {
+      const setup = LEAD.planSetup;
+      term = setup.term;
+      freq = setup.frequency;
+      estPremium = setup.contribution;
+      
+      const simData = getSimulationData();
+      projectionValue = fmt(simData[simData.length - 1].val);
+    } else {
+      term = LEAD.term[g] || 20;
+      freq = LEAD.premFreq[g] || "Yearly";
+      estPremium = LEAD.premium[g + "|" + key] || 0;
+      projectionLabel = "Total sum assured";
+      projectionValue = fmt(sumAssured);
+    }
+    
+    let members = [`${LEAD.title} ${LEAD.first} ${LEAD.last} (Primary, Age ${LEAD.age})`];
+    if (g === "Lifestyle Protection") {
+      if (LEAD.spouse && LEAD.spouse.name) {
+        members.push(`${LEAD.spouse.name} (Spouse, Age ${LEAD.spouse.age})`);
+      }
+      if (LEAD.children && LEAD.children.length > 0) {
+        LEAD.children.forEach(c => {
+          members.push(`${c.name} (Child, Age ${c.age})`);
+        });
+      }
+    }
+    
+    let riders = [];
+    if (g === "Retirement" || g === "Savings/Future Aspirations") {
+      const setup = LEAD.planSetup;
+      if (setup.riders["Accidental Death & Dismemberment"]) riders.push("Accidental Death $15/mo");
+      if (setup.riders["Critical Illness Cover"]) riders.push("Critical Illness $45/mo");
+      if (setup.riders["Waiver of Premium"]) riders.push("Waiver of Premium $50/mo");
+    }
+    
+    return `
+      <div class="product-summary-card">
+        <div class="product-summary-header">
+          <div class="product-summary-meta">
+            <span class="product-summary-badge">${def.code}</span>
+            <div>
+              <div class="product-summary-title">${prod.name}</div>
+              <div class="product-summary-subtitle">${g}</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btnS" data-edit-plan-goal="${idx}" style="padding:6px 12px; font-size:0.75rem;">✏️ Edit plan</button>
+            <button class="trash" data-delete-plan-goal="${g}" style="border: 1px solid var(--line); border-radius:6px; width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center;">🗑</button>
+          </div>
+        </div>
+        
+        <div class="product-summary-row">
+          <div class="product-summary-cell">
+            <div class="lbl">${projectionLabel}</div>
+            <div class="val" style="font-size:1.1rem; color:var(--blue-d);">${projectionValue}</div>
+          </div>
+          <div class="product-summary-cell">
+            <div class="lbl">Policy term</div>
+            <div class="val">${term} years</div>
+          </div>
+          <div class="product-summary-cell">
+            <div class="lbl">Premium frequency</div>
+            <div class="val">${freq}</div>
+          </div>
+          <div class="product-summary-cell">
+            <div class="lbl">Estimated premium</div>
+            <div class="val">${fmt(estPremium)} ${freq === "Monthly" ? "USD" : ""}</div>
+          </div>
+        </div>
+        
+        <div class="product-summary-section">
+          <div class="lbl">Covered members</div>
+          <div class="product-summary-pills">
+            ${members.map(m => `<span class="product-summary-pill">${m}</span>`).join("")}
+          </div>
+        </div>
+        
+        ${riders.length > 0 ? `
+          <div class="product-summary-section">
+            <div class="lbl">Selected riders</div>
+            <div class="product-summary-pills">
+              ${riders.map(r => `<span class="product-summary-pill" style="border-color:var(--tint-b); background:var(--tint); color:var(--blue-d);">${r}</span>`).join("")}
+            </div>
+          </div>
+        ` : ""}
+      </div>
+    `;
+  }).join("");
+  
+  return `
+    <div style="margin-bottom: 20px;">
+      <h3 style="margin-bottom:2px">Solution Summary</h3>
+      <p class="cap">Enter the details of the family member you wish to add to your plan.</p>
+    </div>
+    
+    ${tabs}
+    
+    <div class="sol-summary-card">
+      <div class="sol-summary-stats">
+        <div class="sol-summary-stat">
+          <div class="sol-summary-label">Total sum assured</div>
+          <div class="sol-summary-val">${fmt(totalSumAssured)}</div>
+        </div>
+        <div class="sol-summary-stat" style="border-left: 1px solid var(--line); padding-left: 40px;">
+          <div class="sol-summary-label">Total monthly premium</div>
+          <div class="sol-summary-val" style="color:var(--blue);">${fmt(totalMonthlyPremium)} <span style="font-size:0.9rem; font-weight:600;">USD</span></div>
+        </div>
+      </div>
+      <button class="btnP" id="goToP4Btn" style="padding:12px 24px; font-size:0.9rem; display:inline-flex; align-items:center; gap:8px;">
+        Continue to Solution & AI insights <span style="font-size:1.1rem;">→</span>
+      </button>
+    </div>
+    
+    <div>
+      ${cards}
+    </div>
+  `;
+}
+
+function chooseYourPlanView(){
+  const act=activeGoals();
+  if(!act.length)return `<div class="card"><h3>Choose your Plan</h3><p class="cap">No priority needs selected. Go back to the Goal Planner to select at least one.</p><button class="btnS" data-plangoal="__back">← Back to Goal Planner</button></div>`;
+  if(planTab>act.length)planTab=act.length;
+  
+  const configuredCount=act.filter(goalConfigured).length;
+  
+  const tabs=`<div class="planTabsRow">
+    <div class="planTabs">
+      <button class="planTab" data-plangoal="__back">Goals</button>
+      ${act.map((gg,i)=>`<button class="planTab ${i===planTab?"on":""}" data-plangoal="${i}">${gg}${goalConfigured(gg)?" ✓":""}</button>`).join("")}
+      <button class="planTab ${planTab===act.length?"on":""}" data-plangoal="${act.length}">Solution summary <span style="background:var(--blue); color:#fff; border-radius:50%; width:16px; height:16px; display:inline-flex; align-items:center; justify-content:center; font-size:0.65rem;">${configuredCount}</span></button>
+    </div>
+    <div class="progressPill">${configuredCount} of ${act.length} goals configured</div>
+  </div>`;
+
+  if (planTab === act.length) {
+    return renderSolutionSummary(tabs);
+  }
+
+  const g=act[planTab], def=GOAL_DEFS[g];
+  const chosenKey=LEAD.chosenProduct[g]||def.products[0].key;
+  const prod=def.products.find(p=>p.key===chosenKey)||def.products[0];
+  const sumAssured=+LEAD.goalAmt[g]||0;
+  
+  const steps = getValidSubSteps(g);
+  if (steps.indexOf(planSubStep) === -1) {
+    planSubStep = steps[0];
+  }
+  
+  // Left Column Product List (High fidelity style matching screenshot)
+  const productList=`<div class="card" data-goalctx="${g}">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span class="codeTag">${def.code}</span><h4 style="margin:0">${g} Products</h4></div>
+    <p class="cap" style="margin-bottom:16px;">Select one of the curated protection options below to configure its coverage and premium.</p>
+    ${def.products.map((p,pi)=>`
+      <button class="prodOpt ${p.key===chosenKey?"on":""}" data-chooseprod="${p.key}" style="display: block; padding: 12px; margin-bottom: 8px; width: 100%; border: 1px solid ${p.key===chosenKey?'var(--navy)':'var(--line)'}; border-radius: 8px; text-align: left; background: #fff; cursor: pointer; transition: all 0.2s; box-shadow: ${p.key===chosenKey?'0 0 0 1px var(--navy)':''};">
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <b style="color:var(--navy); font-size:0.9rem;">${p.name}</b>
+          ${p.tag ? `<span style="font-size:0.65rem; font-weight:700; background:var(--tint); color:var(--blue-d); border-radius:4px; padding:2px 6px;">${p.tag}</span>` : ""}
+        </div>
+        <div style="font-size:0.75rem; color:var(--grey); line-height:1.3; font-weight: normal;">${p.desc || "Standard protection option."}</div>
+      </button>
+    `).join("")}
+  </div>`;
+
+  const tabs=`<div class="planTabsRow">
+    <div class="planTabs">
+      <button class="planTab" data-plangoal="__back">Goals</button>
+      ${act.map((gg,i)=>`<button class="planTab ${i===planTab?"on":""}" data-plangoal="${i}">${gg}${goalConfigured(gg)?" ✓":""}</button>`).join("")}
+    </div>
+    <div class="progressPill">${configuredCount} of ${act.length} goals configured</div>
+  </div>`;
+
+  let details = "";
+  const setup = LEAD.planSetup;
+  
+  if (planSubStep === 0) {
+    details = `
+      <div class="card" data-goalctx="${g}">
+        <div class="wizard-header">
+          <div class="wizard-step-title">Premium Setup</div>
+          <div class="wizard-step-desc">Configure your investment contribution.</div>
+        </div>
+        
+        <div class="grid2">
+          <div class="f">
+            <label>Contribution Amount ($)</label>
+            <input type="number" data-setup-contribution value="${setup.contribution}" placeholder="e.g. 5000">
+          </div>
+          <div class="f">
+            <label>Frequency</label>
+            <select data-setup-frequency>
+              <option value="Monthly" ${setup.frequency === "Monthly" ? "selected" : ""}>Monthly</option>
+              <option value="Quarterly" ${setup.frequency === "Quarterly" ? "selected" : ""}>Quarterly</option>
+              <option value="Semi-annually" ${setup.frequency === "Semi-annually" ? "selected" : ""}>Semi-annually</option>
+              <option value="Yearly" ${setup.frequency === "Yearly" ? "selected" : ""}>Yearly</option>
+            </select>
+          </div>
+          <div class="f">
+            <label>Term Options (Years)</label>
+            <select data-setup-term>
+              <option value="5" ${setup.term == 5 ? "selected" : ""}>5</option>
+              <option value="10" ${setup.term == 10 ? "selected" : ""}>10</option>
+              <option value="15" ${setup.term == 15 ? "selected" : ""}>15</option>
+              <option value="20" ${setup.term == 20 ? "selected" : ""}>20</option>
+            </select>
+          </div>
+          <div class="f">
+            <label>Optional Lump Sum (Dump-in)</label>
+            <input type="number" data-setup-dumpin value="${setup.dumpIn}" placeholder="e.g. 0">
+          </div>
+        </div>
+        
+        <div class="navRow" style="margin-top:24px;">
+          <button class="btnS" data-substep-prev>Back</button>
+          <button class="btnP" data-substep-next>Continue</button>
+        </div>
+      </div>
+    `;
+  } else if (planSubStep === 1) {
+    details = `
+      <div class="card" data-goalctx="${g}">
+        <div class="wizard-header">
+          <div class="wizard-step-title">Investment Strategy</div>
+          <div class="wizard-step-desc">Choose a risk profile that matches your comfort level.</div>
+        </div>
+        
+        <div class="risk-card ${setup.risk === "Conservative" ? "active" : ""}" data-setup-risk="Conservative">
+          <div class="icon-wrap">🛡️</div>
+          <div class="info">
+            <h4>Conservative</h4>
+            <p>Focus on capital preservation with steady, low-risk returns.</p>
+          </div>
+          <div class="badge-wrap">
+            <div class="ret">4-6%</div>
+            <div class="lbl low">Low Risk</div>
+          </div>
+        </div>
+        
+        <div class="risk-card ${setup.risk === "Balanced" ? "active" : ""}" data-setup-risk="Balanced">
+          <div class="icon-wrap">⚖️</div>
+          <div class="info">
+            <h4>Balanced</h4>
+            <p>A mix of equities and bonds for moderate growth and stability.</p>
+          </div>
+          <div class="badge-wrap">
+            <div class="ret">6-8%</div>
+            <div class="lbl medium">Medium Risk</div>
+          </div>
+        </div>
+        
+        <div class="risk-card ${setup.risk === "Aggressive" ? "active" : ""}" data-setup-risk="Aggressive">
+          <div class="icon-wrap">📈</div>
+          <div class="info">
+            <h4>Aggressive</h4>
+            <p>Maximizing long-term growth through higher equity exposure.</p>
+          </div>
+          <div class="badge-wrap">
+            <div class="ret">8-12%</div>
+            <div class="lbl high">High Risk</div>
+          </div>
+        </div>
+        
+        <div class="navRow" style="margin-top:24px;">
+          <button class="btnS" data-substep-prev>Back</button>
+          <button class="btnP" data-substep-next>Continue</button>
+        </div>
+      </div>
+    `;
+  } else if (planSubStep === 2) {
+    let total = 0;
+    Object.values(setup.funds).forEach(v => total += v);
+    
+    details = `
+      <div class="card" data-goalctx="${g}">
+        <div class="wizard-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div class="wizard-step-title">Fund Allocation</div>
+            <div class="wizard-step-desc">Distribute your investment across available funds.</div>
+          </div>
+          <div class="total-badge ${total !== 100 ? "error" : ""}">
+            Total: ${total}%
+          </div>
+        </div>
+        
+        <div>
+          ${Object.entries(setup.funds).map(([name, pct]) => {
+            let desc = "";
+            if (name === "Global Equity Index Fund") desc = "Equity • Charge: 1.2%";
+            else if (name === "US Technology Growth") desc = "Equity • Charge: 1.5%";
+            else if (name === "Emerging Markets") desc = "Equity • Charge: 1.8%";
+            else if (name === "Global Corporate Bond") desc = "Fixed Income • Charge: 0.8%";
+            else if (name === "Money Market Secure") desc = "Cash • Charge: 0.3%";
+            
+            return `
+              <div class="fund-row">
+                <div class="fund-info">
+                  <div>
+                    <div class="fund-name">${name}</div>
+                    <div class="fund-details">${desc}</div>
+                  </div>
+                  <div class="fund-pct">${pct}%</div>
+                </div>
+                <input type="range" min="0" max="100" step="5" value="${pct}" data-fund-slider="${name}">
+              </div>
+            `;
+          }).join("")}
+        </div>
+        
+        <div class="navRow" style="margin-top:24px;">
+          <button class="btnS" data-substep-prev>Back</button>
+          <button class="btnP" data-substep-next ${total !== 100 ? "disabled" : ""}>Continue</button>
+        </div>
+      </div>
+    `;
+  } else if (planSubStep === 3) {
+    details = `
+      <div class="card" data-goalctx="${g}">
+        <div class="wizard-header">
+          <div class="wizard-step-title">Protection (Riders)</div>
+          <div class="wizard-step-desc">Enhance your plan with additional coverage.</div>
+        </div>
+        
+        <div class="rider-card included">
+          <div class="info">
+            <h4 style="margin:0 0 6px 0; font-weight:700;">Included Built-in Benefits</h4>
+            <ul style="font-size:0.8rem; color:var(--grey); padding-left:16px; margin:0;">
+              <li>Death Benefit (Account Value or Sum Assured, whichever higher)</li>
+              <li>Incapacity Benefit</li>
+              <li>Second Medical Opinion Service</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="rider-card">
+          <div class="info">
+            <h4>Accidental Death & Dismemberment</h4>
+            <p>Provides additional payout in case of accidental death or severe injury.</p>
+            <div class="cost">Est. Cost: $15/mo</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" data-setup-rider="Accidental Death & Dismemberment" ${setup.riders["Accidental Death & Dismemberment"] ? "checked" : ""}>
+            <span class="sw-slider"></span>
+          </label>
+        </div>
+        
+        <div class="rider-card">
+          <div class="info">
+            <h4>Critical Illness Cover</h4>
+            <p>Lump sum payout upon diagnosis of 36 major critical illnesses.</p>
+            <div class="cost">Est. Cost: $45/mo</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" data-setup-rider="Critical Illness Cover" ${setup.riders["Critical Illness Cover"] ? "checked" : ""}>
+            <span class="sw-slider"></span>
+          </label>
+        </div>
+        
+        <div class="rider-card">
+          <div class="info">
+            <h4>Waiver of Premium</h4>
+            <p>Waives future premiums if you become totally disabled.</p>
+            <div class="cost">Est. Cost: 2% of premium</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" data-setup-rider="Waiver of Premium" ${setup.riders["Waiver of Premium"] ? "checked" : ""}>
+            <span class="sw-slider"></span>
+          </label>
+        </div>
+        
+        <div class="navRow" style="margin-top:24px;">
+          <button class="btnS" data-substep-prev>Back</button>
+          <button class="btnP" data-substep-next>Continue</button>
+        </div>
+      </div>
+    `;
+  } else if (planSubStep === 4) {
+    const simData = getSimulationData();
+    const svgChart = generateSimulationSVG(simData);
+    
+    details = `
+      <div class="card" data-goalctx="${g}">
+        <div class="wizard-header">
+          <div class="wizard-step-title">Projection & Simulation</div>
+          <div class="wizard-step-desc">Visualize your wealth growth over time.</div>
+        </div>
+        
+        <div style="background:var(--bg); padding:12px; border-radius:8px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;">
+            <span>Simulate Annual Growth Rate:</span>
+            <span style="color:var(--blue-d); font-size:1.1rem;">${LEAD.growth}%</span>
+          </div>
+          <input type="range" min="0" max="15" step="1" value="${LEAD.growth}" id="wizardGrowthSlider">
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--grey); margin-top:4px;">
+            <span>0% (Pessimistic)</span>
+            <span>8% (Target)</span>
+            <span>15% (Optimistic)</span>
+          </div>
+        </div>
+        
+        <div class="sim-chart-container">
+          ${svgChart}
+          <div class="sim-chart-legend">
+            <div class="sim-legend-item"><span class="sim-legend-color" style="background:#46586A;"></span>Total Paid</div>
+            <div class="sim-legend-item"><span class="sim-legend-color" style="background:#0090DA;"></span>Account Value</div>
+            <div class="sim-legend-item"><span class="sim-legend-color" style="background:#5A9E1E;"></span>Death Benefit</div>
+          </div>
+        </div>
+        
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th style="text-align:right;">Total Paid</th>
+              <th style="text-align:right;">Account Value</th>
+              <th style="text-align:right;">Surrender Value</th>
+              <th style="text-align:right;">Death Benefit</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${[5, 10, 15, 20].map(y => {
+              const d = simData.find(pt => pt.year === y) || simData[simData.length - 1];
+              const surrenderFee = y < 8 ? 0.95 : 1.0;
+              return `
+                <tr style="font-weight: ${y === 20 ? "700" : "normal"}; background: ${y === 20 ? "var(--tint)" : "transparent"};">
+                  <td>Year ${y}</td>
+                  <td style="text-align:right;">${fmt(d.paid)}</td>
+                  <td style="text-align:right; color:var(--blue-d);">${fmt(d.val)}</td>
+                  <td style="text-align:right;">${fmt(Math.round(d.val * surrenderFee))}</td>
+                  <td style="text-align:right; color:var(--green);">${fmt(d.db)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+        
+        <div class="navRow" style="margin-top:24px;">
+          <button class="btnS" data-substep-prev>Back</button>
+          <button class="btnP" data-substep-next>Continue</button>
+        </div>
+      </div>
+    `;
+  } else if (planSubStep === 5) {
+    const simData = getSimulationData();
+    const svgChart = generateScenarioSVG(simData);
+    const finalVal = simData[simData.length - 1].val;
+    const finalPaid = simData[simData.length - 1].paid;
+    
+    details = `
+      <div class="card" data-goalctx="${g}">
+        <div class="wizard-header">
+          <div class="wizard-step-title">Scenario Simulation</div>
+          <div class="wizard-step-desc">Stress-test your wealth journey against life's unpredictable moments.</div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:16px; margin-bottom:16px;">
+          <div class="sim-chart-container" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.75rem;">
+              <span>🔵 Live Projection</span>
+              <span>Total Invested: <b>${fmt(finalPaid)}</b></span>
+              <span>Maturity Value: <b>${fmt(finalVal)}</b></span>
+            </div>
+            ${svgChart}
+            <div class="sim-chart-legend">
+              <div class="sim-legend-item"><span class="sim-legend-color" style="background:#0090DA;"></span>Simulated Scenario</div>
+              <div class="sim-legend-item"><span class="sim-legend-color" style="background:#5A9E1E;"></span>Best Case (+2%)</div>
+              <div class="sim-legend-item"><span class="sim-legend-color" style="background:#C0392B;"></span>Worst Case (-3%)</div>
+            </div>
+          </div>
+          
+          <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px; display:flex; flex-direction:column; justify-content:space-between; background:#fafafa;">
+            <div>
+              <div style="font-size:0.75rem; color:var(--grey); text-transform:uppercase; font-weight:700;">Growth Sentiment</div>
+              <div style="font-size:1.6rem; font-weight:800; color:var(--blue-d); margin:4px 0;">${LEAD.growth}%</div>
+              <input type="range" min="3" max="12" step="0.5" value="${LEAD.growth}" id="scenarioGrowthSlider" style="margin-bottom:10px;">
+            </div>
+            <p style="font-size:0.7rem; color:var(--grey); line-height:1.3; margin:0;">
+              *Simulating growth rates helps visualize the impact of long-term market volatility on your maturity value.
+            </p>
+          </div>
+        </div>
+        
+        <div class="event-sim-box">
+          <h4 style="margin:0 0 4px 0;">Event Simulator</h4>
+          <p class="cap" style="margin-bottom:12px;">Add hypothetical events to see how they impact your final return.</p>
+          
+          <div class="event-row">
+            <div class="f" style="flex:1;">
+              <label>Action Type</label>
+              <select id="eventActionType">
+                <option value="Top-up">Top-up</option>
+              </select>
+            </div>
+            <div class="f" style="flex:1;">
+              <label>Amount ($)</label>
+              <input type="number" id="eventAmount" value="5000">
+            </div>
+            <div class="f" style="flex:1;">
+              <label>Year</label>
+              <input type="number" id="eventYear" value="5">
+            </div>
+            <button class="btnP" id="addEventBtn" style="padding: 7px 16px; border-radius:6px; height:34px;">+ Add</button>
+          </div>
+          
+          ${setup.events.length > 0 ? `
+            <div style="margin-top:12px; border-top:1px solid var(--line); padding-top:12px;">
+              <div style="font-weight:700; font-size:0.8rem; margin-bottom:8px;">Active Simulated Events:</div>
+              ${setup.events.map((ev, idx) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--tint); padding:6px 12px; border-radius:6px; margin-bottom:6px; font-size:0.8rem;">
+                  <span>Type: <b>${ev.type}</b> | Amount: <b>${fmt(ev.amount)}</b> | Year: <b>${ev.year}</b></span>
+                  <button style="color:var(--red); font-weight:700; border:none; background:none; cursor:pointer;" data-remove-event="${idx}">✕ Remove</button>
+                </div>
+              `).join("")}
+            </div>
+          ` : ""}
+        </div>
+        
+        <div class="navRow" style="margin-top:24px;">
+          <button class="btnS" data-substep-prev>Back</button>
+          <button class="btnP" data-substep-next>Continue</button>
+        </div>
+      </div>
+    `;
+  } else if (planSubStep === 6) {
+    const simData = getSimulationData();
+    const finalVal = simData[simData.length - 1].val;
+    const finalPaid = simData[simData.length - 1].paid;
+    
+    const premKey = g + "|" + prod.key;
+    LEAD.premium[premKey] = finalPaid;
+    
+    details = `
+      <div class="card" data-goalctx="${g}">
+        <div class="wizard-header">
+          <div class="wizard-step-title">Plan Summary</div>
+          <div class="wizard-step-desc">Review and save your customized wealth builder plan.</div>
+        </div>
+        
+        <div class="summary-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
+          <div style="border: 1px solid var(--line); border-radius: 8px; padding: 14px; background:#fafafa;">
+            <h4 style="margin:0 0 8px 0; border-bottom:1px solid var(--line); padding-bottom:6px;">Client Details</h4>
+            <div style="display:grid; grid-template-columns:1fr 1.2fr; gap:6px; font-size:0.8rem;">
+              <span style="color:var(--grey);">Name:</span><b>${LEAD.title} ${LEAD.first} ${LEAD.last}</b>
+              <span style="color:var(--grey);">Age:</span><b>${LEAD.age}</b>
+              <span style="color:var(--grey);">Occupation:</span><b>${LEAD.occupation}</b>
+            </div>
+          </div>
+          <div style="border: 1px solid var(--line); border-radius: 8px; padding: 14px; background:#fafafa;">
+            <h4 style="margin:0 0 8px 0; border-bottom:1px solid var(--line); padding-bottom:6px;">Plan Setup</h4>
+            <div style="display:grid; grid-template-columns:1fr 1.2fr; gap:6px; font-size:0.8rem;">
+              <span style="color:var(--grey);">Premium:</span><b>${fmt(setup.contribution)} / ${setup.frequency.toLowerCase()}</b>
+              <span style="color:var(--grey);">Term:</span><b>${setup.term} Years</b>
+              <span style="color:var(--grey);">Strategy:</span><b>${setup.risk}</b>
+            </div>
+          </div>
+        </div>
+        
+        <div style="border: 1px solid var(--line); border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+          <h4 style="margin:0 0 8px 0;">Fund Allocation</h4>
+          <div style="display:flex; height:24px; border-radius:6px; overflow:hidden; margin-bottom:12px;">
+            ${Object.entries(setup.funds).filter(([_, pct]) => pct > 0).map(([name, pct], idx) => {
+              const colors = ["#0090DA", "#5A9E1E", "#B26A00", "#C0392B", "#8E44AD"];
+              return `<div style="width:${pct}%; background:${colors[idx % colors.length]}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.7rem; font-weight:700;" title="${name}: ${pct}%">${pct}%</div>`;
+            }).join("")}
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; font-size:0.75rem;">
+            ${Object.entries(setup.funds).filter(([_, pct]) => pct > 0).map(([name, pct], idx) => {
+              const colors = ["#0090DA", "#5A9E1E", "#B26A00", "#C0392B", "#8E44AD"];
+              return `
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px; height:10px; border-radius:50%; background:${colors[idx % colors.length]}; display:inline-block;"></span>
+                  <span>${name} (${pct}%)</span>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+        
+        <div style="display:flex; gap:16px; margin-bottom:16px;">
+          <div style="flex:1; border: 2px solid var(--blue); border-radius: 8px; padding: 16px; text-align:center; background: var(--tint);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--grey); font-weight:700;">Maturity Projection</div>
+            <div style="font-size:1.8rem; font-weight:800; color:var(--blue-d); margin:4px 0;">${fmt(finalVal)}</div>
+            <div style="font-size:0.75rem; color:var(--grey);">Total Contributions: <b>${fmt(finalPaid)}</b></div>
+          </div>
+        </div>
+        
+        <div style="border:1px solid #FFC107; background:#FFFDE7; border-radius:8px; padding:14px; margin-bottom:16px;">
+          <h4 style="margin:0 0 6px 0; color:#B26A00;">⚠️ Risk Disclosure</h4>
+          <p style="font-size:0.75rem; color:var(--grey); line-height:1.4; margin-bottom:8px;">
+            <b>Investment-Linked Plan:</b> This is an insurance policy where part of your premiums are invested in funds. The return is not guaranteed and depends on market performance.
+          </p>
+          <p style="font-size:0.75rem; color:var(--grey); line-height:1.4; margin:0;">
+            <b>Early Surrender:</b> Terminating the policy early (especially within the first 3 years) may result in getting back significantly less than paid due to upfront charges.
+          </p>
+        </div>
+        
+        <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:16px;">
+          <input type="checkbox" id="disclosureCheckbox" style="margin-top:3px; cursor:pointer;">
+          <label for="disclosureCheckbox" style="font-size:0.78rem; color:var(--grey); line-height:1.4; cursor:pointer;">
+            I declare that I have explained the product features, charges, and risks. The Customer understands that projections shown are for illustrative purposes at ${LEAD.growth}% and are not guaranteed.
+          </label>
+        </div>
+        
+        <div class="navRow" style="margin-top:24px;">
+          <button class="btnS" data-substep-prev>Back</button>
+          <button class="btnP" data-saveplan disabled id="wizardSaveBtn">Save Plan →</button>
+        </div>
+      </div>
+    `;
+  }
+  
+  return `<h3 style="margin-bottom:2px">Choose your Plan</h3><p class="cap">Select a product for each need, configure its coverage and premium, and confirm who should be covered.</p>
+  ${tabs}
+  <div class="pgrid"><div class="c4">${productList}</div><div class="c8">${details}</div></div>`;
+}
+
+function p3View(){
+  const C=calc();
+  const body={
+    1:`<div class="card"><h3>Client & Family</h3><p class="cap">Profile + Family merged — one confirmation pass.</p>${profileFields()}${familyFields()}</div>`,
+    2:`<div class="card"><h3>Financial Snapshot</h3><p class="cap">Change income or cover — every gap, script figure and premium downstream updates from the same engine.</p>${finFields()}</div>`,
+    3:goalPlannerView(),
+    4:chooseYourPlanView()}[step3];
+  if(step3===4)return `<div class="pgrid"><div class="c12">${body}</div></div>${navRow(3)}`;
+  const guided={
+    1:[["Opening the session",`“Good morning ${LEAD.title} — I have most details on file from the referral, so this will be quick.”`,1],
+       ["Discussing the spouse",`“Tell me about ${LEAD.spouse.name}'s situation.”`,0],
+       ["Children & education",`“${LEAD.children[0].name} is ${LEAD.children[0].age} and ${LEAD.children[1].name} is ${LEAD.children[1].age} — university planning becomes very real at those ages.”`,0]],
+    2:[["Opening the money talk","“Not to sell — so the numbers we look at are yours, not averages.”",1],
+       ["Revealing the gap",`“Your lifestyle protection gap is ${fmtM(C.lp)}. Let me show you exactly how that's calculated.”`,0]],
+    3:[["Establishing priorities","“If you had to protect only one thing first — income, education, or retirement?”",1],
+       ["Discussing savings capacity",`“Based on your income and expenses, you have room to set aside ${fmt(LEAD.fin.savingsCapMo)} a month toward these goals.”`,0],
+       ["Adjusting the plan","“If that feels tight, we adjust the timeline — not the protection.”",0]]}[step3];
+  const coachTip={
+    1:["Watch for missing dependants",`No spouse or children on file beyond what's shown here would understate the protection need — confirm the family picture is complete before moving on.`],
+    2:["Sanity-check income vs. savings",`If declared savings capacity looks high relative to income minus expenses, flag it — it usually means a one-off windfall, not a repeatable monthly figure.`],
+    3:[`Explain the trade-off, not just the split`,`When priority weight and dollar goal amount pull in different directions (e.g. a small weight on a large gap), say so explicitly — that mismatch is the actual decision the client is making.`]}[step3];
+  return `<div class="pgrid">
+    <div class="c8">${body}</div>
+    <div class="c4 stack">
+      ${rail("Guided Conversation","Reads the same numbers as the form",guided)}
+      ${rail("AI coaching tip","SMART 360",[[coachTip[0],coachTip[1],1]])}
+    </div>
+  </div>${navRow(3)}`;
+}
+
+/* ---- phase 4 ---- */
+function objections4(){const C=calc();return [
+ ["“Let me think about it.”",`“Of course. Is there a specific part you'd like more time on? Every month we wait, the ${fmtM(C.lp)} gap remains open — I want any concern addressed today so you can make a fully informed decision, not a delayed one.”`],
+ ["“The premium is too high.”",`“${fmt(C.prem("Lifestyle Protection")*12)} a year is ${fmt(C.prem("Lifestyle Protection")*12/365)} a day for ${fmtM(C.lp)} of guaranteed protection for ${LEAD.spouse.name}, ${LEAD.children[0].name} and ${LEAD.children[1].name}. The question isn't the daily cost — it's the cost to your family if that cover isn't in place.”`],
+ ["“I need to speak to my spouse first.”",`“Absolutely — ${LEAD.spouse.name} should be part of this. Can we arrange a short call with both of you?”`],
+ ["“I'm happy with what I already have.”",`“Good — having cover is better than none. The analysis shows a remaining gap of ${fmtM(C.lp)}. If your existing cover closes it, we're done. Would you share the details so we can check?”`]];}
+function p4View(){
+  const C=calc();
+  const act=activeGoals();
+  
+  let totalGoalAmt = act.reduce((a, g) => a + (+LEAD.goalAmt[g] || 0), 0);
+  let totalMonthlyPremium = act.reduce((a, g) => a + getGoalMonthlyPremium(g), 0);
+  let totalAnnualPremium = totalMonthlyPremium * 12;
+  let coverageGap = C.total; // Lifestyle + Critical Illness + Accidental
+
+  // Render cards for each active/configured recommended product
+  const productReviews = act.map((g, idx) => {
+    const def = GOAL_DEFS[g];
+    const key = LEAD.chosenProduct[g] || def.products[0].key;
+    const prod = def.products.find(p => p.key === key) || def.products[0];
+    const sumAssured = +LEAD.goalAmt[g] || 0;
+    
+    let isInvestment = g === "Retirement" || g === "Savings/Future Aspirations";
+    
+    let term = 20;
+    let freq = "Monthly";
+    let estPremium = 0;
+    let projectionLabel = "Maturity Projection";
+    let projectionValue = "$0";
+    
+    let simData = [];
+    if (isInvestment) {
+      const setup = LEAD.planSetup;
+      term = setup.term;
+      freq = setup.frequency;
+      estPremium = setup.contribution;
+      simData = getSimulationData();
+      projectionValue = fmt(simData[simData.length - 1].val);
+    } else {
+      term = LEAD.term[g] || 20;
+      freq = LEAD.premFreq[g] || "Yearly";
+      estPremium = LEAD.premium[g + "|" + key] || 0;
+      projectionLabel = "Total Sum Assured";
+      projectionValue = fmt(sumAssured);
+    }
+    
+    // Left column benefits
+    let benefits = [];
+    if (isInvestment) {
+      benefits = [
+        "Long-term savings with potential market growth.",
+        "Flexibility to adjust contributions over time."
+      ];
+    } else {
+      benefits = [
+        "Guaranteed protection for dependents.",
+        "Portable — independent of employer group coverage."
+      ];
+    }
+    
+    // Riders
+    let riders = [];
+    if (isInvestment) {
+      const setup = LEAD.planSetup;
+      if (setup.riders["Accidental Death & Dismemberment"]) riders.push({ name: "Accidental Death", cost: 15 });
+      if (setup.riders["Critical Illness Cover"]) riders.push({ name: "Critical Illness", cost: 45 });
+      if (setup.riders["Waiver of Premium"]) riders.push({ name: "Waiver of Premium", cost: 50 });
+    }
+    
+    // Total Contributions
+    const totalContributionsVal = isInvestment ? simData[simData.length - 1].paid : (estPremium * term);
+    
+    return `
+      <div class="product-review-card">
+        <div class="product-review-banner">
+          <div class="product-review-banner-decor" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6));"></div>
+          <div class="product-review-meta">
+            <div class="product-review-tag">Priority ${idx + 1} · ${g.toUpperCase()}</div>
+            <div class="product-review-title">${prod.name}</div>
+            <div class="product-review-subtitle">${prod.desc || g + " protection plan"}</div>
+          </div>
+          <div class="product-review-projection">
+            <div class="lbl">${projectionLabel}</div>
+            <div class="val">${projectionValue}</div>
+          </div>
+        </div>
+        
+        <div class="product-review-body">
+          <div class="product-review-left">
+            <div class="review-box" style="border:none; padding:0;">
+              <h4 style="margin:0 0 10px 0; color:var(--navy); font-size:0.85rem; font-weight:800;">Key Benefits</h4>
+              <ul style="padding-left: 20px; font-size: 0.8rem; color: var(--grey); margin:0; line-height: 1.5;">
+                ${benefits.map(b => `<li style="margin-bottom: 6px;"><span style="color:var(--green); font-weight:700; margin-right:4px;">✓</span> ${b}</li>`).join("")}
+              </ul>
+            </div>
+            
+            <div class="review-box why-fits">
+              <h4>Why it fits your goal</h4>
+              <p style="font-size:0.78rem; color:var(--grey); line-height:1.45; margin:0;">
+                This recommendation fits your goal because it aligns with your target amount, time horizon, and current financial position. It is structured to support steady progress toward your objective, ensuring that you stay on track to achieve your financial goal within the planned timeframe.
+              </p>
+            </div>
+            
+            ${isInvestment ? `
+              <div class="review-box">
+                <h4>Projection Visualisation</h4>
+                ${generateSimulationSVG(simData)}
+                <div class="sim-chart-legend">
+                  <div class="sim-legend-item"><span class="sim-legend-color" style="background:#46586A;"></span>Total Paid</div>
+                  <div class="sim-legend-item"><span class="sim-legend-color" style="background:#0090DA;"></span>Account Value</div>
+                  <div class="sim-legend-item"><span class="sim-legend-color" style="background:#5A9E1E;"></span>Death Benefit</div>
+                </div>
+              </div>
+              
+              <div class="review-box">
+                <h4>Fund Allocation</h4>
+                <div style="display:flex; height:20px; border-radius:4px; overflow:hidden; margin-bottom:10px;">
+                  ${Object.entries(LEAD.planSetup.funds).filter(([_, pct]) => pct > 0).map(([name, pct], idx) => {
+                    const colors = ["#0090DA", "#5A9E1E", "#B26A00", "#C0392B", "#8E44AD"];
+                    return `<div style="width:${pct}%; background:${colors[idx % colors.length]}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.65rem; font-weight:700;" title="${name}: ${pct}%">${pct}%</div>`;
+                  }).join("")}
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; font-size:0.72rem; color:var(--grey);">
+                  ${Object.entries(LEAD.planSetup.funds).filter(([_, pct]) => pct > 0).map(([name, pct], idx) => {
+                    const colors = ["#0090DA", "#5A9E1E", "#B26A00", "#C0392B", "#8E44AD"];
+                    return `<div style="display:flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; border-radius:50%; background:${colors[idx % colors.length]};"></span>${name} (${pct}%)</div>`;
+                  }).join("")}
+                </div>
+              </div>
+            ` : ""}
+          </div>
+          
+          <div class="product-review-right">
+            <div style="background:var(--tint); border:1px solid var(--tint-b); border-radius:8px; padding:16px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--blue-d);">Total Contributions</span>
+              <b style="font-size:1.15rem; color:var(--blue-d);">${fmt(totalContributionsVal)}</b>
+            </div>
+            
+            ${isInvestment ? `
+              <div class="review-box" style="padding:0; border:none;">
+                <h4 style="margin:0 0 10px 0;">Your wealth growth</h4>
+                <table class="summary-table" style="margin-top:0;">
+                  <thead>
+                    <tr>
+                      <th style="font-size:0.68rem; padding:6px 8px;">Year</th>
+                      <th style="font-size:0.68rem; padding:6px 8px; text-align:right;">Total Paid</th>
+                      <th style="font-size:0.68rem; padding:6px 8px; text-align:right;">Account Value</th>
+                      <th style="font-size:0.68rem; padding:6px 8px; text-align:right;">Surrender Value</th>
+                      <th style="font-size:0.68rem; padding:6px 8px; text-align:right;">Death Benefit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${[5, 10, 15, 20].map(y => {
+                      const d = simData.find(pt => pt.year === y) || simData[simData.length - 1];
+                      const surrenderFee = y < 8 ? 0.95 : 1.0;
+                      return `
+                        <tr>
+                          <td style="font-size:0.72rem; padding:6px 8px;">Year ${y}</td>
+                          <td style="text-align:right; font-size:0.72rem; padding:6px 8px;">${fmt(d.paid)}</td>
+                          <td style="text-align:right; font-size:0.72rem; padding:6px 8px; color:var(--blue-d); font-weight:700;">${fmt(d.val)}</td>
+                          <td style="text-align:right; font-size:0.72rem; padding:6px 8px;">${fmt(Math.round(d.val * surrenderFee))}</td>
+                          <td style="text-align:right; font-size:0.72rem; padding:6px 8px; color:var(--green); font-weight:700;">${fmt(d.db)}</td>
+                        </tr>
+                      `;
+                    }).join("")}
+                  </tbody>
+                </table>
+              </div>
+            ` : ""}
+            
+            <div class="review-box">
+              <h4 style="border-bottom:1px solid var(--line); padding-bottom:6px; margin-bottom:10px;">Policy Details</h4>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px 20px; font-size:0.8rem; margin-bottom:10px;">
+                <div>
+                  <div style="color:var(--grey); font-size:0.7rem; text-transform:uppercase;">Premium</div>
+                  <b style="font-size:1rem; color:var(--navy);">${fmt(estPremium)}</b>
+                </div>
+                <div>
+                  <div style="color:var(--grey); font-size:0.7rem; text-transform:uppercase;">Term</div>
+                  <b style="font-size:1rem; color:var(--navy);">${term} yrs</b>
+                </div>
+                <div>
+                  <div style="color:var(--grey); font-size:0.7rem; text-transform:uppercase;">Mode Selected</div>
+                  <b style="font-size:0.95rem; color:var(--navy);">${freq}</b>
+                </div>
+                <div>
+                  <div style="color:var(--grey); font-size:0.7rem; text-transform:uppercase;">Strategy</div>
+                  <b style="font-size:0.95rem; color:var(--blue-d);">${isInvestment ? LEAD.planSetup.risk : "Standard"}</b>
+                </div>
+              </div>
+              
+              ${riders.length > 0 ? `
+                <div style="border-top:1px solid var(--line); padding-top:10px; margin-top:10px;">
+                  <div style="color:var(--grey); font-size:0.7rem; text-transform:uppercase; font-weight:700; margin-bottom:6px;">Selected Riders</div>
+                  ${riders.map(r => `
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; padding:4px 0; border-bottom:1px dashed var(--line);">
+                      <span>${r.name}</span>
+                      <b>$${r.cost} / mo</b>
+                    </div>
+                  `).join("")}
+                </div>
+              ` : ""}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div>
+        <div style="font-size:0.7rem; color:var(--blue-d); font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">Step 5 of 5 · Solution and AI Insights</div>
+        <h2 style="font-size:1.8rem; font-weight:800; color:var(--navy); margin-top:2px;">Solution and AI Insights</h2>
+        <p style="font-size:0.85rem; color:var(--grey); margin:0;">AI-curated insurance solutions tailored for ${LEAD.title} ${LEAD.first} ${LEAD.last} needs.</p>
+      </div>
+      <button class="btnS" id="downloadPDFBtn" style="padding:10px 20px; font-weight:700; border-radius:8px; display:inline-flex; align-items:center; gap:8px;">
+        📥 Download PDF
+      </button>
+    </div>
+    
+    <div class="client-banner-card">
+      <div class="client-banner-left">
+        <div class="client-banner-name">${LEAD.title} ${LEAD.first} ${LEAD.last}</div>
+        <div class="client-banner-meta">${LEAD.age} years old · Married · ${LEAD.children.length} Children</div>
+        <div class="client-banner-dependants">
+          <span class="client-banner-dep">${LEAD.spouse.name} (Spouse)</span>
+          ${LEAD.children.map(c => `<span class="client-banner-dep">${c.name} (${c.age})</span>`).join("")}
+        </div>
+      </div>
+      <div class="client-banner-right">
+        <div class="client-banner-stat">
+          <div class="lbl">Total Goal Amount</div>
+          <div class="val highlight">${fmt(totalGoalAmt)}</div>
+        </div>
+        <div class="client-banner-stat">
+          <div class="lbl">Annual Premium</div>
+          <div class="val">${fmt(totalAnnualPremium)}</div>
+        </div>
+        <div class="client-banner-stat">
+          <div class="lbl">Coverage Gap</div>
+          <div class="val" style="color:var(--red);">${fmtM(coverageGap)}</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="ai-insights-container">
+      <div class="ai-section summary">
+        <h4>Summary:</h4>
+        <p>
+          ${LEAD.title} ${LEAD.first} ${LEAD.last}, a ${LEAD.age}-year-old married ${LEAD.sector.toLowerCase()} with ${LEAD.children.length} children aged ${LEAD.children.map(c=>c.age).join(" and ")}, has a monthly income of ${fmt(LEAD.fin.incomeMo)} and an annual savings capacity of ${fmt(LEAD.fin.savingsCapMo * 12)}. To address your financial needs, MetLife's tailored product recommendations focus on lifestyle protection, critical illness coverage, accidental death and disability safeguards, and savings for future aspirations, retirement, and children's education. Protection has been fully aligned to ensure comprehensive coverage.
+        </p>
+      </div>
+      <div class="ai-section insight">
+        <h4>Insight:</h4>
+        <p>
+          Given your priorities, the Live Life product provides lifestyle protection, ensuring your family's quality of life is maintained. Critical Illness Care Plus prepares you for health contingencies by offering comprehensive coverage. For safety, the Forever product secures your family against accidents and disability. Additionally, Future Protect facilitates long-term savings growth, while the International Wealth Builder and Future Protect support your retirement goals and your children's education needs effectively.
+        </p>
+      </div>
+      <div class="ai-section outcome">
+        <h4>Outcome:</h4>
+        <p>
+          The MetLife suite enables you to safeguard your lifestyle and protect against illness and accidents. It supports creating a secure future fund, achieving a robust retirement fund, and ensuring your children's education is adequately funded. These products ensure a holistic financial strategy that brings peace of mind through their diverse benefits.
+        </p>
+      </div>
+    </div>
+    
+    <div class="card" style="margin-bottom:24px; padding:20px;">
+      <h3 style="margin-bottom:12px;">Financial Metrics Calculation:</h3>
+      <table class="summary-table" style="margin-top:0;">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Definition</th>
+            <th style="text-align:right;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Total Assets</b></td>
+            <td>Savings + Existing Life Coverage</td>
+            <td style="text-align:right; font-weight:700;">${fmt(LEAD.fin.savings + LEAD.fin.cover)}</td>
+          </tr>
+          <tr>
+            <td><b>Total Liabilities</b></td>
+            <td>Annual Expenses + Liabilities</td>
+            <td style="text-align:right; font-weight:700;">${fmt(LEAD.fin.expMo * 12 + LEAD.fin.liab)}</td>
+          </tr>
+          <tr>
+            <td><b>Net Assets</b></td>
+            <td>Total Assets - Liabilities</td>
+            <td style="text-align:right; font-weight:700;">${fmt(LEAD.fin.savings + LEAD.fin.cover - (LEAD.fin.expMo * 12 + LEAD.fin.liab))}</td>
+          </tr>
+          <tr>
+            <td><b>Insurance Protection Gap</b></td>
+            <td>Lifestyle + Disability + Critical Illness</td>
+            <td style="text-align:right; font-weight:700; color:var(--red);">${fmtM(coverageGap)}</td>
+          </tr>
+          <tr style="background:var(--tint); font-weight:700;">
+            <td><b>Total Financial Goal</b></td>
+            <td>Insurance Protection Gap + Future Goals</td>
+            <td style="text-align:right; color:var(--blue-d);">${fmt(totalGoalAmt)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div style="margin-bottom: 16px;">
+      <h3 style="margin-bottom:14px;">Recommended Products</h3>
+      ${productReviews}
+    </div>
+    
+    <div style="border-top: 1px solid var(--line); padding-top:14px; margin-top:20px; font-size:0.75rem; color:var(--grey);">
+      <b>Disclaimer:</b> The values mentioned here are indicative. Please validate for accurate values with illustration through GSSP.
+    </div>
+    
+    <div class="navRow" style="margin-top:24px;">
+      <button class="btnS" data-nav="p3" id="reviewBackBtn">← Back to Needs Analysis</button>
+      <button class="btnP" data-nav="dash">Finish → back to Dashboard</button>
+    </div>
+  `;
+}
+}
+
+/* ---- nav row ---- */
+function navRow(phase){
+  if(phase===3){
+    if(step3===4)return "";
+    let nb;
+    if(step3===3){
+      const act=activeGoals(), total=act.reduce((a,g)=>a+(+LEAD.alloc[g]||0),0);
+      nb=`<button class="btnP" id="next3" ${total!==100?"disabled":""}>Continue to recommendations →</button>`;
+    } else {
+      nb=`<button class="btnP" id="next3">Continue: ${steps3[step3]} →</button>`;
+    }
+    const bb=step3>1?'<button class="btnS" id="back3">← Back</button>':'<button class="btnS" data-nav="p2">← Pre-Meeting</button>';
+    return `<div class="navRow">${bb}${nb}</div>`;
+  }
+  const nxt={1:["p2","Next phase: Pre-Meeting Practice →"],2:["p3","Next phase: Needs Analysis →"]}[phase];
+  const bck={1:["dash","← Dashboard"],2:["p1","← Lead Management"],4:["p3","← Needs Analysis"]}[phase];
+  return `<div class="navRow">
+    ${bck?`<button class="btnS" data-nav="${bck[0]}">${bck[1]}</button>`:""}
+    ${nxt?`<button class="btnP" data-nav="${nxt[0]}">${nxt[1]}</button>`:'<button class="btnP" data-nav="dash">Finish → back to Dashboard</button>'}
+  </div>`;}
+
+/* ================= render + wiring ================= */
+function render(){
+  renderSidebar(); renderTop();
+  app.innerHTML={dash:dashView,p1:p1View,p2:p2View,p3:p3View,p4:p4View}[view]();
+  wire(); window.scrollTo({top:0});
+}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
+function wire(){
+  document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>{view=b.dataset.nav;render();});
+  document.querySelectorAll("[data-go3]").forEach(b=>b.onclick=()=>{step3=+b.dataset.go3;render();});
+  const st=document.getElementById("sbTgl");if(st)st.onclick=()=>document.body.classList.toggle("sbMin");
+  app.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});
+  app.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>document.getElementById(b.dataset.acc).classList.toggle("open"));
+  app.querySelectorAll("[data-gc]").forEach(b=>b.onclick=()=>b.closest(".gc").classList.toggle("open"));
+  app.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>document.getElementById(b.dataset.rm).classList.toggle("open"));
+  app.querySelectorAll("[data-how]").forEach(b=>b.onclick=()=>document.getElementById(b.dataset.how).classList.toggle("open"));
+  app.querySelectorAll(".beatChk").forEach(c=>c.addEventListener("change",()=>{
+    c.closest(".acc").classList.toggle("checked",c.checked);
+    const id=c.dataset.cnt, all=app.querySelectorAll(`.beatChk[data-cnt="${id}"]`);
+    const n=[...all].filter(x=>x.checked).length;
+    const el=document.getElementById(id);if(el)el.textContent=`${n} of ${all.length} ${el.dataset.label}`;
+  }));
+  const n3=app.querySelector("#next3");if(n3)n3.onclick=()=>{if(step3===3)planTab=0;step3++;render();};
+  const b3=app.querySelector("#back3");if(b3)b3.onclick=()=>{step3--;render();};
+  [["#inIncome","incomeMo"],["#inExp","expMo"],["#inCover","cover"]].forEach(([sel,k])=>{
+    const el=app.querySelector(sel);if(el)el.oninput=()=>{LEAD.fin[k]=+el.value||0;refreshCalc();};});
+  const u=app.querySelector("[data-unf]");if(u)u.onclick=()=>app.querySelector("#unfBox").classList.toggle("open");
+
+  /* Goal Planner (step 3) */
+  const ct=app.querySelector("#currTgl");if(ct)ct.onclick=()=>{LEAD.currency.global=LEAD.currency.global==="KWD"?"USD":"KWD";render();};
+  const sc=app.querySelector("#inSavCap");if(sc)sc.oninput=()=>{LEAD.fin.savingsCapMo=+sc.value||0;const y=app.querySelector("#savCapYr");if(y)y.textContent=fmt(LEAD.fin.savingsCapMo*12);};
+  app.querySelectorAll("[data-need]").forEach(b=>b.onclick=()=>{const g=b.dataset.need;LEAD.selected[g]=!LEAD.selected[g];if(!LEAD.selected[g])LEAD.alloc[g]=0;render();});
+  app.querySelectorAll("[data-allocpct]").forEach(inp=>inp.oninput=()=>{LEAD.alloc[inp.dataset.allocpct]=+inp.value||0;refreshAllocPlanner();});
+  app.querySelectorAll("[data-goalamt]").forEach(inp=>{
+    inp.oninput=()=>{const raw=inp.value.replace(/[^0-9.]/g,"");LEAD.goalAmt[inp.dataset.goalamt]=raw?+raw:"";};
+    inp.onblur=()=>{const v=LEAD.goalAmt[inp.dataset.goalamt];if(v!=="")inp.value=fmt(v);};
+  });
+  app.querySelectorAll("[data-au]").forEach(b=>b.onclick=()=>{moveActive(b.dataset.au,-1);render();});
+  app.querySelectorAll("[data-ad]").forEach(b=>b.onclick=()=>{moveActive(b.dataset.ad,1);render();});
+  app.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{LEAD.selected[b.dataset.remove]=false;render();});
+  refreshAllocPlanner();
+
+  /* Choose your Plan (step 4) */
+  app.querySelectorAll("[data-plangoal]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.plangoal==="__back"){step3=3;}else{planTab=+b.dataset.plangoal; planSubStep = 0;}render();});
+  app.querySelectorAll("[data-chooseprod]").forEach(b=>b.onclick=()=>{
+    const g=b.closest("[data-goalctx]")?.dataset.goalctx||activeGoals()[planTab];LEAD.chosenProduct[g]=b.dataset.chooseprod; planSubStep = 0; render();});
+  
+  // Sub-step setup handlers
+  const sc_contrib = app.querySelector("[data-setup-contribution]");
+  if(sc_contrib) sc_contrib.oninput = () => { LEAD.planSetup.contribution = +sc_contrib.value || 0; };
+  
+  const sc_freq = app.querySelector("[data-setup-frequency]");
+  if(sc_freq) sc_freq.onchange = () => { LEAD.planSetup.frequency = sc_freq.value; };
+  
+  const sc_term = app.querySelector("[data-setup-term]");
+  if(sc_term) sc_term.onchange = () => { LEAD.planSetup.term = +sc_term.value || 5; };
+  
+  const sc_dumpin = app.querySelector("[data-setup-dumpin]");
+  if(sc_dumpin) sc_dumpin.oninput = () => { LEAD.planSetup.dumpIn = +sc_dumpin.value || 0; };
+  
+  // Risk Strategy
+  app.querySelectorAll("[data-setup-risk]").forEach(card => {
+    card.onclick = () => {
+      const r = card.dataset.setupRisk;
+      LEAD.planSetup.risk = r;
+      if (r === "Conservative") LEAD.growth = 5;
+      else if (r === "Balanced") LEAD.growth = 7;
+      else if (r === "Aggressive") LEAD.growth = 8.5;
+      render();
+    };
+  });
+  
+  // Fund Allocation range sliders
+  app.querySelectorAll("[data-fund-slider]").forEach(slider => {
+    slider.oninput = () => {
+      const fund = slider.dataset.fundSlider;
+      LEAD.planSetup.funds[fund] = +slider.value;
+      render();
+    };
+  });
+  
+  // Riders Toggles
+  app.querySelectorAll("[data-setup-rider]").forEach(cb => {
+    cb.onchange = () => {
+      const rider = cb.dataset.setupRider;
+      LEAD.planSetup.riders[rider] = cb.checked;
+    };
+  });
+  
+  // Projection Sliders
+  const wgs = app.querySelector("#wizardGrowthSlider");
+  if(wgs) wgs.oninput = () => { LEAD.growth = +wgs.value; render(); };
+  
+  const sgs = app.querySelector("#scenarioGrowthSlider");
+  if(sgs) sgs.oninput = () => { LEAD.growth = +sgs.value; render(); };
+  
+  // Add hypothetical events
+  const addEv = app.querySelector("#addEventBtn");
+  if(addEv) {
+    addEv.onclick = () => {
+      const type = app.querySelector("#eventActionType").value;
+      const amount = +app.querySelector("#eventAmount").value || 0;
+      const year = +app.querySelector("#eventYear").value || 1;
+      LEAD.planSetup.events.push({ type, amount, year });
+      render();
+    };
+  }
+  
+  // Remove simulated events
+  app.querySelectorAll("[data-remove-event]").forEach(b => {
+    b.onclick = () => {
+      const idx = +b.dataset.removeEvent;
+      LEAD.planSetup.events.splice(idx, 1);
+      render();
+    };
+  });
+  
+  // Disclosure checkbox to toggle save button state
+  const discCheck = app.querySelector("#disclosureCheckbox");
+  const saveBtn = app.querySelector("#wizardSaveBtn");
+  if (discCheck && saveBtn) {
+    discCheck.onchange = () => {
+      saveBtn.disabled = !discCheck.checked;
+    };
+  }
+  
+  // Wizard Navigation
+  app.querySelectorAll("[data-substep-next]").forEach(b => {
+    b.onclick = () => {
+      const g = activeGoals()[planTab];
+      const steps = getValidSubSteps(g);
+      const currentIdx = steps.indexOf(planSubStep);
+      if (currentIdx < steps.length - 1) {
+        planSubStep = steps[currentIdx + 1];
+        render();
+      }
+    };
+  });
+  
+  app.querySelectorAll("[data-substep-prev]").forEach(b => {
+    b.onclick = () => {
+      const g = activeGoals()[planTab];
+      const steps = getValidSubSteps(g);
+      const currentIdx = steps.indexOf(planSubStep);
+      if (currentIdx > 0) {
+        planSubStep = steps[currentIdx - 1];
+        render();
+      } else {
+        // Go back to goals list
+        if (planTab > 0) {
+          planTab--;
+          planSubStep = 0;
+        } else {
+          step3 = 3;
+        }
+        render();
+      }
+    };
+  });
+  
+  // Save Plan finalization
+  const sp = app.querySelector("#wizardSaveBtn");
+  if(sp) {
+    sp.onclick = () => {
+      const g = app.querySelector("[data-goalctx]").dataset.goalctx;
+      const prodKey = LEAD.chosenProduct[g] || GOAL_DEFS[g].products[0].key;
+      const key = g + "|" + prodKey;
+      
+      const simData = getSimulationData();
+      LEAD.premium[key] = simData[simData.length - 1].paid; // Store paid premium
+      LEAD.premiumTouched[key] = true;
+      
+      const act = activeGoals();
+      if (planTab < act.length - 1) {
+        planTab++;
+        planSubStep = 0;
+        render();
+      } else {
+        toast("Plan saved — all goals configured");
+        view = "p4";
+        render();
+      }
+    };
+  }
+  const rp=app.querySelector("#launchRP");if(rp)rp.onclick=()=>{
+    const mood=app.querySelector("#rpMood").value;
+    app.querySelector("#rpMsg").innerHTML=`<div class="warn g" style="margin-top:10px"><span>▶</span><span><b>Roleplay started</b> — AI avatar of ${LEAD.title} ${LEAD.first} in “${mood}” mood. First line: <i>“I only have a few minutes — what's this about?”</i></span></div>`;
+    toast("Roleplay session launched");};
+  const gs=app.querySelector("#growthSlider");if(gs)gs.oninput=()=>{LEAD.growth=+gs.value;refreshProj();};
+  app.querySelectorAll("[data-risk]").forEach(b=>b.onclick=()=>{LEAD.growth=+b.dataset.risk;render();});
+  app.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>{
+    outcome=b.dataset.out;render();
+    if(outcome==="won")toast("Pipeline updated — Dr James H marked as Won");
+    if(outcome==="pend")toast("Follow-up reminder scheduled (+3 days)");});
+  const lw=app.querySelector("#lostWhy");if(lw)lw.onchange=()=>{
+    if(lw.value){app.querySelector("#outMsg").textContent=`✕ Marked Lost — reason “${lw.value}” recorded to Reports.`;toast("Loss reason recorded");}};
+}
+function refreshCalc(){
+  const C=calc();
+  const s=app.querySelector("#outSurplus"),b=app.querySelector("#outBudget");
+  if(s)s.value=fmt(C.surplus);if(b)b.value=fmt(C.surplus*12);
+  Object.entries({gLP:C.lp,gCI:C.ci,gAD:C.ad}).forEach(([id,v])=>{
+    const el=app.querySelector("#"+id+" .v");if(el)el.textContent=fmtM(v);});
+}
+function refreshAllocPlanner(){
+  const inputs=app.querySelectorAll("[data-allocpct]");
+  if(!inputs.length)return;
+  let total=0;
+  inputs.forEach(inp=>total+=+inp.value||0);
+  const t=app.querySelector("#allocTotal2"),m=app.querySelector("#allocMsg");
+  if(t)t.innerHTML=`<b>${total}%</b>`;
+  if(m)m.textContent=total===100?"":"Please ensure the total priority weight across selected needs equals 100%.";
+  const n3=app.querySelector("#next3");if(n3&&step3===3)n3.disabled=total!==100;
+}
+function refreshProj(){
+  const eduMo=Math.round(LEAD.commitMo*LEAD.alloc["Savings/Future Aspirations"]/100);
+  const retMo=Math.round(LEAD.commitMo*LEAD.alloc["Retirement"]/100);
+  const gv=app.querySelector("#growthVal"),pv=app.querySelector("#projVal"),tb=app.querySelector("#projRows");
+  if(gv)gv.textContent=LEAD.growth.toFixed(1)+"%";
+  if(pv)pv.textContent=fmt(fv(eduMo+retMo,LEAD.growth,20));
+  if(tb)tb.innerHTML=[5,10,15,20].map(y=>{const paid=(eduMo+retMo)*12*y,val=fv(eduMo+retMo,LEAD.growth,y);
+    return `<tr class="${y===20?"hl":""}"><td>Year ${y}${y===20?" (maturity)":""}</td><td>${fmt(paid)}</td><td>${fmt(val)}</td><td>${fmt(Math.max(val,paid))}</td></tr>`;}).join("");
+}
+render();
+</script>
+</body>
+</html>
