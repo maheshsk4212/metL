@@ -1243,13 +1243,7 @@ function chooseYourPlanView(){
     `).join("")}
   </div>`;
 
-  const tabs=`<div class="planTabsRow">
-    <div class="planTabs">
-      <button class="planTab" data-plangoal="__back">Goals</button>
-      ${act.map((gg,i)=>`<button class="planTab ${i===planTab?"on":""}" data-plangoal="${i}">${gg}${goalConfigured(gg)?" ✓":""}</button>`).join("")}
-    </div>
-    <div class="progressPill">${configuredCount} of ${act.length} goals configured</div>
-  </div>`;
+
 
   let details = "";
   const setup = LEAD.planSetup;
@@ -2046,7 +2040,6 @@ function p4View(){
     </div>
   `;
 }
-}
 
 /* ---- nav row ---- */
 function navRow(phase){
@@ -2248,10 +2241,53 @@ function wire(){
         planSubStep = 0;
         render();
       } else {
-        toast("Plan saved — all goals configured");
-        view = "p4";
+        // Go to Solution summary tab instead of immediately switching to view="p4"
+        planTab = act.length;
         render();
       }
+    };
+  }
+
+  // Solution Summary listeners
+  app.querySelectorAll("[data-edit-plan-goal]").forEach(b => {
+    b.onclick = () => {
+      planTab = +b.dataset.editPlanGoal;
+      planSubStep = 0;
+      render();
+    };
+  });
+  
+  app.querySelectorAll("[data-delete-plan-goal]").forEach(b => {
+    b.onclick = () => {
+      const g = b.dataset.deletePlanGoal;
+      const key = g + "|" + (LEAD.chosenProduct[g] || GOAL_DEFS[g].products[0].key);
+      delete LEAD.premium[key];
+      render();
+    };
+  });
+  
+  const goToP4 = app.querySelector("#goToP4Btn");
+  if (goToP4) {
+    goToP4.onclick = () => {
+      view = "p4";
+      render();
+    };
+  }
+
+  // Solution & AI Insights page back button & download
+  const p4Back = app.querySelector("#reviewBackBtn");
+  if (p4Back) {
+    p4Back.onclick = () => {
+      view = "p3";
+      planTab = activeGoals().length; // Solution summary tab
+      render();
+    };
+  }
+
+  const dlPdf = app.querySelector("#downloadPDFBtn");
+  if (dlPdf) {
+    dlPdf.onclick = () => {
+      toast("Downloading Solution Summary PDF...");
     };
   }
   const rp=app.querySelector("#launchRP");if(rp)rp.onclick=()=>{
