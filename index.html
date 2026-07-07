@@ -69,6 +69,8 @@ body.sbMin .main{margin-left:64px}
 .card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px}
 .card h3{font-size:.95rem;margin-bottom:2px}
 .card .cap{color:var(--grey);font-size:.85rem;margin-bottom:10px}
+.ctaBox{background:var(--tint);border-left:3px solid var(--blue);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:var(--navy);line-height:1.5}
+.ctaBox b{color:var(--navy)}
 .secLbl{font-size:.69rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin:12px 0 7px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px 14px}
@@ -664,6 +666,7 @@ function p1View(){
     </div>
     <div class="card c5">
       <h3>3-minute call script</h3>
+      <div class="ctaBox">⚡ <b>No time to review all 5 beats?</b> ${LEAD.title} ${LEAD.first} is a ${C.score}-score HOT lead — the only objective of this call is to book a 25-minute review. Open with the Hook, then skip straight to Beat 5 (Close) for the exact ask: “${fmtM(C.lp)}” is the one number to have ready.</div>
       <p class="cap">Tap a beat to expand. Check a beat off once you've reviewed it. <span id="p1count" data-label="talking points reviewed" style="font-weight:700;color:var(--green)">0 of 5 talking points reviewed</span></p>
       ${beats1().map(([t,intent,txt],i)=>`
         <div class="acc" id="b1-${i}"><button data-acc="b1-${i}"><input type="checkbox" class="beatChk" data-cnt="p1count" title="Mark this talking point as reviewed" onclick="event.stopPropagation()"><span>Beat ${i+1} · ${t}</span><span class="intent">${intent}</span><span class="ar">▾</span></button>
@@ -692,9 +695,11 @@ function beats2(){const C=calc();return [
  ["Your family deserves certainty","ANCHOR",`“Three people depend entirely on the continuation of your ability to practise. For a family you've built, certainty isn't a luxury — it's the foundation.”`,"Warm and affirming — speak to continuity and legacy, not fear."],
  ["Two times, your choice","CLOSE",`“Two slots this week for a focused 40-minute session — Wednesday 6:30 PM or Thursday 7:00 AM before rounds. Which works better?”`,"Binary close removes decision fatigue. Do not add a third option."]];}
 function p2View(){
+  const C=calc();
   return `<div class="pgrid">
     <div class="card c7">
       <h3>Personalised pitch — F2F meeting script</h3>
+      <div class="ctaBox">⚡ <b>Short on prep time?</b> This meeting only needs to land one outcome — a signed slot for the next step. Read Beat 3 (the ${fmtM(C.lp-C.yr*2+LEAD.fin.cover)} coverage gap) and Beat 6 (the binary close) verbatim; the rest builds rapport and context around them.</div>
       <p class="cap">Every figure pulled live from the client's data. <span id="p2count" data-label="beats practiced" style="font-weight:700;color:var(--green)">0 of 6 beats practiced</span></p>
       ${beats2().map(([t,intent,txt,note],i)=>`
         <div class="acc" id="b2-${i}"><button data-acc="b2-${i}"><input type="checkbox" class="beatChk" data-cnt="p2count" title="Mark this beat as practiced" onclick="event.stopPropagation()"><span>Beat ${i+1} · ${t}</span><span class="intent">${intent}</span><span class="ar">▾</span></button>
@@ -1029,8 +1034,14 @@ function generateScenarioSVG(data) {
   `;
 }
 
+function isInvestmentLinked(g) {
+  const def = GOAL_DEFS[g];
+  const key = LEAD.chosenProduct[g] || (def && def.products[0].key);
+  return g === "Retirement" || g === "Savings/Future Aspirations" || key === "futureprotect";
+}
+
 function getValidSubSteps(g) {
-  if (g === "Retirement" || g === "Savings/Future Aspirations") {
+  if (isInvestmentLinked(g)) {
     return [0, 1, 2, 3, 4, 5, 6];
   } else {
     return [0, 3, 6];
@@ -1040,7 +1051,7 @@ function getValidSubSteps(g) {
 function getGoalMonthlyPremium(g) {
   if (!goalConfigured(g)) return 0;
   const key = LEAD.chosenProduct[g] || GOAL_DEFS[g].products[0].key;
-  if (g === "Retirement" || g === "Savings/Future Aspirations") {
+  if (isInvestmentLinked(g)) {
     const setup = LEAD.planSetup;
     let monthly = setup.contribution;
     if (setup.frequency === "Yearly") monthly = setup.contribution / 12;
@@ -1078,12 +1089,12 @@ function renderSolutionSummary(tabs) {
     let projectionLabel = "Maturity projection";
     let projectionValue = "$0";
     
-    if (g === "Retirement" || g === "Savings/Future Aspirations") {
+    if (isInvestmentLinked(g)) {
       const setup = LEAD.planSetup;
       term = setup.term;
       freq = setup.frequency;
       estPremium = setup.contribution;
-      
+
       const simData = getSimulationData();
       projectionValue = fmt(simData[simData.length - 1].val);
     } else {
@@ -1107,7 +1118,7 @@ function renderSolutionSummary(tabs) {
     }
     
     let riders = [];
-    if (g === "Retirement" || g === "Savings/Future Aspirations") {
+    if (isInvestmentLinked(g)) {
       const setup = LEAD.planSetup;
       if (setup.riders["Accidental Death & Dismemberment"]) riders.push("Accidental Death $15/mo");
       if (setup.riders["Critical Illness Cover"]) riders.push("Critical Illness $45/mo");
@@ -1740,7 +1751,7 @@ function p4View(){
     const prod = def.products.find(p => p.key === key) || def.products[0];
     const sumAssured = +LEAD.goalAmt[g] || 0;
     
-    let isInvestment = g === "Retirement" || g === "Savings/Future Aspirations";
+    let isInvestment = isInvestmentLinked(g);
     
     let term = 20;
     let freq = "Monthly";
